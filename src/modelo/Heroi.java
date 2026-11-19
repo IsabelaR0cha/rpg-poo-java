@@ -1,5 +1,6 @@
 package modelo;
 import combate.Combativel;
+import excecoes.ManaInsuficienteException;
 
 public abstract class Heroi extends Entidade {
     protected  int manaAtual;
@@ -25,7 +26,7 @@ public abstract class Heroi extends Entidade {
         return this.nivel;
     }
 
-    public abstract void usarHabilidade(Combativel alvo);
+    public abstract void usarHabilidade(Combativel alvo) throws ManaInsuficienteException;
 
     protected boolean gastarMana(int custo) {
         if(this.manaAtual >= custo) {
