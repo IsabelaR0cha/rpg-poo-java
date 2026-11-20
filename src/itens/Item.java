@@ -1,63 +1,30 @@
 package itens;
 
-import excecoes.ItemNaoEncontradoException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import modelo.Heroi;
+public class Item {
+    private String nome;
+    private TipoItem tipo;
+    private int valorEfeito;
 
-public class Inventario {
-    private List<Item> itens;
-
-    public Inventario() {
-        this.itens = new ArrayList<>();
+    public Item(String nome, TipoItem tipo, int valorEfeito) {
+        this.nome = nome;
+        this.tipo = tipo;
+        this.valorEfeito = valorEfeito;
     }
 
-    public void adicionarItem(Item item) {
-        if (item != null) {
-            this.itens.add(item);
-        }
+    public String getNome() {
+        return this.nome;
     }
 
-    public Item buscarItem(String nomeItem) throws ItemNaoEncontradoException {
-        if (nomeItem == null) {
-            throw new ItemNaoEncontradoException("[!] Nome do item inválido.");
-        }
-
-        for (Item item : this.itens) {
-            if (item.getNome().equalsIgnoreCase(nomeItem)) {
-                return item;
-            }
-        }
-
-        throw new ItemNaoEncontradoException("[!] Item não encontrado no inventário: " + nomeItem);
+    public TipoItem getTipo() {
+        return this.tipo;
     }
 
-    public Item removerItem(String nomeItem) throws ItemNaoEncontradoException {
-        Item encontrado = buscarItem(nomeItem);
-        this.itens.remove(encontrado);
-        return encontrado;
+    public int getValorEfeito() {
+        return this.valorEfeito;
     }
 
-    public void usarItem(String nomeItem, Heroi heroi) throws ItemNaoEncontradoException {
-        if (heroi == null) {
-            return;
-        }
-
-        Item item = removerItem(nomeItem);
-
-        if (item.getTipo() == TipoItem.CURA) {
-            heroi.curar(item.getValorEfeito());
-        } else if (item.getTipo() == TipoItem.MANA) {
-            heroi.recuperarMana(item.getValorEfeito());
-        }
-    }
-
-    public List<Item> getItens() {
-        return Collections.unmodifiableList(this.itens);
-    }
-
-    public boolean estaVazio() {
-        return this.itens.isEmpty();
+    @Override
+    public String toString() {
+        return this.nome + " (+" + this.valorEfeito + " " + this.tipo + ")";
     }
 }

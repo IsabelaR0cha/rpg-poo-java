@@ -1,9 +1,10 @@
-package modelo;
+package itens;
 
 import excecoes.ItemNaoEncontradoException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import modelo.Heroi;
 
 public class Inventario {
     private List<Item> itens;

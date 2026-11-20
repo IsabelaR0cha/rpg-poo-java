@@ -9,6 +9,12 @@ public class Atirador extends Heroi {
     }
 
     @Override
+    public double getChanceCritico() {
+        // Atirador possui mira certeira e maior chance de acerto crítico (28%)
+        return 0.28;
+    }
+
+    @Override
     public void atacar(Combativel alvo) {
         if (alvo != null && alvo.estaVivo()) {
             alvo.receberDano(this.ataque);
@@ -17,14 +23,16 @@ public class Atirador extends Heroi {
 
     @Override
     public void usarHabilidade(Combativel alvo) throws ManaInsuficienteException {
-        int custoMana = 12;
+        int custoMana = 14;
         if (!gastarMana(custoMana)) {
-            throw new ManaInsuficienteException("[!] Mana insuficiente para usar a Rajada Precisa.");
+            throw new ManaInsuficienteException("[!] Mana insuficiente para o Disparo Elemental Perfurante.");
         }
 
         if (alvo != null && alvo.estaVivo()) {
-            int danoHabilidade = (int) (this.ataque * 1.4) + 5;
-            alvo.receberDano(danoHabilidade);
+            double mult = this.elemento.getMultiplicadorContra(alvo.getElemento());
+            int danoBase = (int) (this.ataque * 1.45) + 8;
+            int danoFinal = (int) (danoBase * mult);
+            alvo.receberDano(danoFinal);
         }
     }
 }

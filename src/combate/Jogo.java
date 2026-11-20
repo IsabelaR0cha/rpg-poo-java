@@ -6,6 +6,7 @@ import itens.Item;
 import itens.TipoItem;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import modelo.Elemento;
 import modelo.Heroi;
 import modelo.Monstro;
@@ -17,6 +18,7 @@ public class Jogo {
     private Batalha batalhaAtual;
     private boolean jogoFinalizado;
     private boolean vitoriaFinal;
+    private static final Random random = new Random();
 
     public Jogo(Heroi heroi) {
         this.heroi = heroi;
@@ -30,11 +32,11 @@ public class Jogo {
     }
 
     private void inicializarAndares() {
-        // 4 andares temáticos da Torre dos Elementos
-        this.guardioesAndares.add(new Monstro("Slime Gigante Pyro", 65, 14, 4, 1, Elemento.PYRO));
-        this.guardioesAndares.add(new Monstro("Espectro das Marés", 85, 18, 6, 2, Elemento.HYDRO));
-        this.guardioesAndares.add(new Monstro("Guardião dos Ventos", 110, 22, 8, 3, Elemento.ANEMO));
-        this.guardioesAndares.add(new Monstro("Arconte da Tempestade", 145, 28, 12, 4, Elemento.ELECTRO));
+        // 4 andares temáticos e balanceados da Torre dos Elementos
+        this.guardioesAndares.add(new Monstro("Slime Gigante Pyro", 85, 19, 6, 1, Elemento.PYRO));
+        this.guardioesAndares.add(new Monstro("Espectro das Marés", 120, 26, 8, 2, Elemento.HYDRO));
+        this.guardioesAndares.add(new Monstro("Guardião dos Ventos", 155, 33, 10, 3, Elemento.ANEMO));
+        this.guardioesAndares.add(new Monstro("Arconte da Tempestade", 215, 42, 14, 4, Elemento.ELECTRO));
     }
 
     private void iniciarBatalhaDoAndar() {
@@ -65,36 +67,97 @@ public class Jogo {
         }
 
         if (this.batalhaAtual.heroiVenceu()) {
+            Monstro monstroDerrotado = this.batalhaAtual.getMonstro();
+
+            // Caso tenha vencido um Mímico surpresa
+            if (monstroDerrotado.isMimico()) {
+                Item recompensaLendaria = new Item("Elixir dos Arcontes", TipoItem.CURA, 75);
+                this.heroi.getInventario().adicionarItem(recompensaLendaria);
+                this.andarAtual++;
+
+                if (this.andarAtual >= this.guardioesAndares.size()) {
+                    this.jogoFinalizado = true;
+                    this.vitoriaFinal = true;
+                    return "\n\n👑 [VITÓRIA ABSOLUTA] Você sobreviveu ao Mímico e conquistou os 4 andares da Torre!";
+                } else {
+                    iniciarBatalhaDoAndar();
+                    return "\n\n💎 [MÍMICO EXTERMINADO] Você eliminou a criatura voraz e obteve: "
+                            + recompensaLendaria.getNome() + "!\nAvançando para o Andar " + (this.andarAtual + 1) + "...";
+                }
+            }
+
+            // Derrotou o guardião do andar
             this.heroi.subirNivel();
-            Item recompensaBau = abrirBauDoAndar(this.andarAtual + 1);
-            this.heroi.getInventario().adicionarItem(recompensaBau);
 
-            this.andarAtual++;
-
-            if (this.andarAtual >= this.guardioesAndares.size()) {
+            // Se derrotou o último chefe (Andar 4)
+            if (this.andarAtual >= this.guardioesAndares.size() - 1) {
                 this.jogoFinalizado = true;
                 this.vitoriaFinal = true;
-                return "\n\n[VITÓRIA] Você conquistou os 4 andares da Torre dos Elementos!";
-            } else {
+                return "\n\n🏆 [VITÓRIA ÉPICA] Você subjugou o Arconte da Tempestade e conquistou a Torre dos Elementos!";
+            }
+
+            // Sorteio de Evento Aleatório entre os andares
+            int sorteioEvento = random.nextInt(100);
+
+            if (sorteioEvento < 30) {
+                // Evento 1: Baú Mímico (Armadilha de combate surpresa!)
+                Elemento elementoMimico = (this.heroi.getElemento() == Elemento.PYRO) ? Elemento.HYDRO : Elemento.PYRO;
+                Monstro mimico = new Monstro("Mímico Voraz", 80 + (this.andarAtual * 20), 22 + (this.andarAtual * 5), 7, this.andarAtual + 1, elementoMimico, true);
+                this.batalhaAtual = new Batalha(this.heroi, mimico);
+
+                return "\n\n[SUBIU DE NÍVEL] Você avançou para o Nível " + this.heroi.getNivel() + "!"
+                        + "\n⚠️ [EVENTO SURPRESA: BAÚ MÍMICO!]"
+                        + "\nAo abrir o baú dourado das ruínas, dentes e garras afiadas saltam de dentro!"
+                        + "\nUm MÍMICO VORAZ [" + elementoMimico + "] atacou em emboscada! Defenda-se!";
+            } else if (sorteioEvento < 55) {
+                // Evento 2: Fonte Mística Sagrada
+                this.heroi.curar(50);
+                this.heroi.recuperarMana(35);
+                this.andarAtual++;
                 iniciarBatalhaDoAndar();
-                return "\n\n[ANDAR CONCLUÍDO] Você subiu para o nível " + this.heroi.getNivel()
-                        + " e encontrou no baú: " + recompensaBau.getNome()
+
+                return "\n\n[SUBIU DE NÍVEL] Você avançou para o Nível " + this.heroi.getNivel() + "!"
+                        + "\n✨ [EVENTO: FONTE MÍSTICA]"
+                        + "\nVocê encontrou uma fonte de águas sagradas entre as pedras antigas."
+                        + "\nVocê bebeu e recuperou +50 de HP e +35 de Mana!"
+                        + "\nAvançando revitalizado para o Andar " + (this.andarAtual + 1) + "...";
+            } else if (sorteioEvento < 75) {
+                // Evento 3: Altar dos Titãs (Aumento de status permanente)
+                this.heroi.aumentarAtaque(5);
+                this.heroi.aumentarDefesa(2);
+                this.andarAtual++;
+                iniciarBatalhaDoAndar();
+
+                return "\n\n[SUBIU DE NÍVEL] Você avançou para o Nível " + this.heroi.getNivel() + "!"
+                        + "\n🏛️ [EVENTO: ALTAR DOS TITÃS]"
+                        + "\nVocê tocou a relíquia no altar central e absorveu essência pura: +5 de Ataque e +2 de Defesa permanentes!"
+                        + "\nAvançando para o Andar " + (this.andarAtual + 1) + "...";
+            } else {
+                // Evento 4: Baú de Tesouro com Item Poderoso
+                Item recompensaBau = abrirBauDoAndar(this.andarAtual + 1);
+                this.heroi.getInventario().adicionarItem(recompensaBau);
+                this.andarAtual++;
+                iniciarBatalhaDoAndar();
+
+                return "\n\n[SUBIU DE NÍVEL] Você avançou para o Nível " + this.heroi.getNivel() + "!"
+                        + "\n🎁 [EVENTO: BAÚ DE TESOURO]"
+                        + "\nVocê encontrou no baú das ruínas: " + recompensaBau.getNome()
                         + "!\nAvançando para o Andar " + (this.andarAtual + 1) + "...";
             }
         } else {
             this.jogoFinalizado = true;
             this.vitoriaFinal = false;
-            return "\n\n[DERROTA] Fim de jogo no Andar " + (this.andarAtual + 1) + ".";
+            return "\n\n💀 [DERROTA] Fim de jogo no Andar " + (this.andarAtual + 1) + ".";
         }
     }
 
     private Item abrirBauDoAndar(int numeroAndar) {
         if (numeroAndar == 1) {
-            return new Item("Poção de Cura Maior", TipoItem.CURA, 40);
+            return new Item("Poção de Cura Maior", TipoItem.CURA, 45);
         } else if (numeroAndar == 2) {
-            return new Item("Éter Concentrado", TipoItem.MANA, 35);
+            return new Item("Éter Concentrado", TipoItem.MANA, 40);
         } else {
-            return new Item("Elixir Elemental", TipoItem.CURA, 60);
+            return new Item("Elixir Elemental Sagrado", TipoItem.CURA, 65);
         }
     }
 
@@ -107,6 +170,9 @@ public class Jogo {
     }
 
     public Monstro getMonstroAtual() {
+        if (this.batalhaAtual != null) {
+            return this.batalhaAtual.getMonstro();
+        }
         return this.guardioesAndares.get(this.andarAtual < this.guardioesAndares.size() ? this.andarAtual : this.guardioesAndares.size() - 1);
     }
 

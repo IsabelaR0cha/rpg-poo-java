@@ -136,7 +136,7 @@ public class GerenciadorPersistencia {
             int indiceAndar = Math.max(0, Math.min(andarSalvo - 1, 3));
             return Jogo.restaurarJogo(heroiCarregado, indiceAndar);
 
-        } catch (IOException | NumberFormatException | IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException e) {
             if (e instanceof PersistenciaException) {
                 throw (PersistenciaException) e;
             }

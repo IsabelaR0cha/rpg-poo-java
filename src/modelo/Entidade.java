@@ -1,4 +1,5 @@
 package modelo;
+
 import combate.Combativel;
 
 public abstract class Entidade implements Combativel {
@@ -14,40 +15,52 @@ public abstract class Entidade implements Combativel {
         this.hpMax = hpMax;
         this.ataque = ataque;
         this.defesa = defesa;
-
     }
 
     @Override
-    public String getNome(){
+    public String getNome() {
         return this.nome;
     }
-    
+
     @Override
-    public int getHpAtual(){
+    public int getHpAtual() {
         return this.hpAtual;
     }
-    
+
     @Override
-    public int getHpMax(){
+    public int getHpMax() {
         return this.hpMax;
     }
-    
+
     @Override
-    public boolean estaVivo(){
+    public boolean estaVivo() {
         return this.hpAtual > 0;
+    }
+
+    public int getAtaque() {
+        return this.ataque;
+    }
+
+    public int getDefesa() {
+        return this.defesa;
+    }
+
+    public void aumentarAtaque(int valor) {
+        this.ataque += valor;
+    }
+
+    public void aumentarDefesa(int valor) {
+        this.defesa += valor;
     }
 
     @Override
     public void receberDano(int dano) {
-        int danoReal = dano - this.defesa;
-
-        if(danoReal < 0){
-            danoReal = 0;
-        }
+        int reducao = this.defesa / 2;
+        int danoReal = Math.max(2, dano - reducao);
 
         this.hpAtual -= danoReal;
 
-        if(this.hpAtual < 0){
+        if (this.hpAtual < 0) {
             this.hpAtual = 0;
         }
     }
