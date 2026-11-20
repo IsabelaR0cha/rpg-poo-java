@@ -4,8 +4,8 @@ import combate.Combativel;
 import excecoes.ManaInsuficienteException;
 
 public class Arcanista extends Heroi {
-    public Arcanista(String nome, int hpMax, int ataque, int defesa, int manaMax) {
-        super(nome, hpMax, ataque, defesa, manaMax);
+    public Arcanista(String nome, int hpMax, int ataque, int defesa, int manaMax, Elemento elemento) {
+        super(nome, hpMax, ataque, defesa, manaMax, elemento);
     }
 
     @Override

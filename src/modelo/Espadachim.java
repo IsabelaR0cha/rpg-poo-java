@@ -3,8 +3,8 @@ import combate.Combativel;
 import excecoes.ManaInsuficienteException;
 
 public class Espadachim extends Heroi {
-    public Espadachim(String nome, int hpMax, int ataque, int defesa, int manaMax) {
-        super(nome, hpMax, ataque, defesa, manaMax);
+    public Espadachim(String nome, int hpMax, int ataque, int defesa, int manaMax, Elemento elemento) {
+        super(nome, hpMax, ataque, defesa, manaMax, elemento);
     }
 
     @Override
