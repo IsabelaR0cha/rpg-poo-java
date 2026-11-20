@@ -1,4 +1,4 @@
-package modelo;
+package itens;
 
 public enum TipoItem {
     CURA,
