@@ -2,12 +2,14 @@ package modelo;
 
 import combate.Combativel;
 import excecoes.ManaInsuficienteException;
+import excecoes.ItemNaoEncontradoException;
 
 public abstract class Heroi extends Entidade {
     protected int manaAtual;
     protected int manaMax;
     protected int nivel;
     protected Elemento elemento;
+    protected Inventario inventario;
 
     public Heroi(String nome, int hpMax, int ataque, int defesa, int manaMax, Elemento elemento) {
         super(nome, hpMax, ataque, defesa);
@@ -15,6 +17,9 @@ public abstract class Heroi extends Entidade {
         this.manaAtual = manaMax;
         this.nivel = 1;
         this.elemento = elemento;
+        this.inventario = new Inventario();
+        this.inventario.adicionarItem(new Item("Poção de Cura", TipoItem.CURA, 25));
+        this.inventario.adicionarItem(new Item("Éter de Mana", TipoItem.MANA, 20));
     }
 
     public int getManaAtual() {
@@ -31,6 +36,14 @@ public abstract class Heroi extends Entidade {
 
     public Elemento getElemento() {
         return this.elemento;
+    }
+
+    public Inventario getInventario() {
+        return this.inventario;
+    }
+
+    public void usarItem(String nomeItem) throws ItemNaoEncontradoException {
+        this.inventario.usarItem(nomeItem, this);
     }
 
     public abstract void usarHabilidade(Combativel alvo) throws ManaInsuficienteException;
