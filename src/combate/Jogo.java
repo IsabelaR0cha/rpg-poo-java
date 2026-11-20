@@ -121,4 +121,13 @@ public class Jogo {
     public boolean isVitoriaFinal() {
         return this.vitoriaFinal;
     }
+
+    public static Jogo restaurarJogo(Heroi heroi, int indiceAndar) {
+        Jogo jogo = new Jogo(heroi);
+        jogo.andarAtual = Math.max(0, Math.min(indiceAndar, jogo.guardioesAndares.size() - 1));
+        jogo.jogoFinalizado = false;
+        jogo.vitoriaFinal = false;
+        jogo.iniciarBatalhaDoAndar();
+        return jogo;
+    }
 }

@@ -79,4 +79,13 @@ public abstract class Heroi extends Entidade {
         this.hpAtual = this.hpMax;
         this.manaAtual = this.manaMax;
     }
+
+    public void definirEstadoSalvo(int hpAtual, int hpMax, int manaAtual, int manaMax, int ataque, int defesa) {
+        this.hpMax = hpMax;
+        this.hpAtual = Math.max(0, Math.min(hpAtual, hpMax));
+        this.manaMax = manaMax;
+        this.manaAtual = Math.max(0, Math.min(manaAtual, manaMax));
+        this.ataque = ataque;
+        this.defesa = defesa;
+    }
 }
