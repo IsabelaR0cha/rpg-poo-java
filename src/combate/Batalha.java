@@ -46,32 +46,15 @@ public class Batalha {
         StringBuilder log = new StringBuilder();
         log.append("[Turno ").append(this.turno).append("]\n");
 
-        // Processa efeitos de início de turno no herói (ex: queimadura)
-        String efeitoInicio = this.heroi.processarEfeitosInicioTurno();
-        if (!efeitoInicio.isEmpty()) {
-            log.append(efeitoInicio);
-            if (!this.heroi.estaVivo()) {
-                log.append(this.heroi.getNome()).append(" sucumbiu às chamas...\n");
-                return log.toString();
-            }
-        }
-
         // Verifica se o monstro esquiva
         if (random.nextDouble() < this.monstro.getChanceEsquiva()) {
             log.append("💨 ").append(this.monstro.getNome())
                .append(" esquivou agilmente do ataque de ").append(this.heroi.getNome()).append("!\n");
         } else {
-            // Ataque com chance de acerto crítico
             boolean critico = random.nextDouble() < this.heroi.getChanceCritico();
             int hpAntes = this.monstro.getHpAtual();
 
-            if (critico) {
-                // Golpe Crítico causa 50% a mais de dano
-                int danoBase = (int) (this.heroi.getAtaque() * 1.5);
-                this.monstro.receberDano(danoBase);
-            } else {
-                this.heroi.atacar(this.monstro);
-            }
+            this.heroi.atacar(this.monstro, critico);
 
             int danoCausado = hpAntes - this.monstro.getHpAtual();
             String msgCritico = critico ? " [💥 ACERTO CRÍTICO!]" : "";
@@ -81,12 +64,7 @@ public class Batalha {
                .append(" causando ").append(danoCausado).append(" de dano.\n");
         }
 
-        if (this.monstro.estaVivo()) {
-            log.append(turnoDoMonstro());
-        } else {
-            log.append("\n⭐ ").append(this.monstro.getNome()).append(" foi derrotado!");
-        }
-
+        finalizarTurnoAposAcaoHeroi(log);
         return log.toString();
     }
 
@@ -95,36 +73,24 @@ public class Batalha {
             return "A batalha já foi encerrada.";
         }
 
-        StringBuilder log = new StringBuilder();
-        log.append("[Turno ").append(this.turno).append("]\n");
-
-        // Processa efeitos de início de turno
-        String efeitoInicio = this.heroi.processarEfeitosInicioTurno();
-        if (!efeitoInicio.isEmpty()) {
-            log.append(efeitoInicio);
-            if (!this.heroi.estaVivo()) {
-                log.append(this.heroi.getNome()).append(" sucumbiu às chamas...\n");
-                return log.toString();
-            }
-        }
-
+        // 1. Tenta usar a habilidade ANTES de qualquer efeito de turno.
+        // Se lançar ManaInsuficienteException, nada do turno ou de efeitos é alterado!
         int hpAntes = this.monstro.getHpAtual();
         this.heroi.usarHabilidade(this.monstro);
         int danoCausado = hpAntes - this.monstro.getHpAtual();
 
+        StringBuilder log = new StringBuilder();
+        log.append("[Turno ").append(this.turno).append("]\n");
+
         String reacao = this.heroi.getElemento().getDescricaoReacao(this.monstro.getElemento());
 
-        log.append("✨ ").append(this.heroi.getNome()).append(" usou sua Habilidade Elemental (")
+        log.append("✨ ").append(this.heroi.getNome()).append(" usou ")
+           .append(this.heroi.getNomeHabilidade()).append(" (")
            .append(this.heroi.getElemento()).append(") contra ")
            .append(this.monstro.getNome()).append(reacao)
            .append(" causando ").append(danoCausado).append(" de dano!\n");
 
-        if (this.monstro.estaVivo()) {
-            log.append(turnoDoMonstro());
-        } else {
-            log.append("\n⭐ ").append(this.monstro.getNome()).append(" foi derrotado!");
-        }
-
+        finalizarTurnoAposAcaoHeroi(log);
         return log.toString();
     }
 
@@ -133,39 +99,41 @@ public class Batalha {
             return "A batalha já foi encerrada.";
         }
 
+        // 1. Tenta usar o item ANTES de qualquer efeito de turno.
+        // Se lançar ItemNaoEncontradoException, nada do turno ou de efeitos é alterado!
+        this.heroi.usarItem(nomeItem);
+
         StringBuilder log = new StringBuilder();
         log.append("[Turno ").append(this.turno).append("]\n");
 
-        // Processa efeitos de início de turno
-        String efeitoInicio = this.heroi.processarEfeitosInicioTurno();
-        if (!efeitoInicio.isEmpty()) {
-            log.append(efeitoInicio);
-            if (!this.heroi.estaVivo()) {
-                log.append(this.heroi.getNome()).append(" sucumbiu às chamas...\n");
-                return log.toString();
-            }
-        }
-
-        this.heroi.usarItem(nomeItem);
-
         log.append("🧪 ").append(this.heroi.getNome()).append(" utilizou ")
-           .append(nomeItem).append(" do inventário.\n");
+           .append(nomeItem).append(" da mochila.\n");
 
-        if (this.monstro.estaVivo()) {
-            log.append(turnoDoMonstro());
-        }
-
+        finalizarTurnoAposAcaoHeroi(log);
         return log.toString();
     }
 
-    private String turnoDoMonstro() {
-        this.turno++;
-        String acao = this.monstro.agirNoTurno(this.heroi, this.turno);
-
-        if (!this.heroi.estaVivo()) {
-            acao += "\n\n💀 " + this.heroi.getNome() + " foi derrotado em combate...";
+    private void finalizarTurnoAposAcaoHeroi(StringBuilder log) {
+        // Se o monstro sobreviveu, realiza o contra-ataque
+        if (this.monstro.estaVivo()) {
+            String acaoMonstro = this.monstro.agirNoTurno(this.heroi, this.turno);
+            log.append(acaoMonstro);
+        } else {
+            log.append("\n⭐ ").append(this.monstro.getNome()).append(" foi derrotado!");
         }
 
-        return acao;
+        // Fim de um turno concluído com sucesso: processa efeitos contínuos válidos (ex: Queimadura)
+        if (this.heroi.estaVivo()) {
+            String efeitoResidual = this.heroi.processarEfeitosFimTurno();
+            if (!efeitoResidual.isEmpty()) {
+                log.append(efeitoResidual);
+            }
+        }
+
+        if (!this.heroi.estaVivo()) {
+            log.append("\n\n💀 ").append(this.heroi.getNome()).append(" foi derrotado...");
+        }
+
+        this.turno++;
     }
 }

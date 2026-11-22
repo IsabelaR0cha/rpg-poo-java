@@ -10,22 +10,14 @@ public class Atirador extends Heroi {
 
     @Override
     public double getChanceCritico() {
-        // Atirador possui mira certeira e maior chance de acerto crítico (28%)
-        return 0.28;
-    }
-
-    @Override
-    public void atacar(Combativel alvo) {
-        if (alvo != null && alvo.estaVivo()) {
-            alvo.receberDano(this.ataque);
-        }
+        return 0.28; // Precisão mortal (28% de crítico)
     }
 
     @Override
     public void usarHabilidade(Combativel alvo) throws ManaInsuficienteException {
-        int custoMana = 14;
+        int custoMana = getCustoManaHabilidade();
         if (!gastarMana(custoMana)) {
-            throw new ManaInsuficienteException("[!] Mana insuficiente para o Disparo Elemental Perfurante.");
+            throw new ManaInsuficienteException("[!] Mana insuficiente para o " + getNomeHabilidade() + ".");
         }
 
         if (alvo != null && alvo.estaVivo()) {
@@ -34,5 +26,25 @@ public class Atirador extends Heroi {
             int danoFinal = (int) (danoBase * mult);
             alvo.receberDano(danoFinal);
         }
+    }
+
+    @Override
+    public String getNomeHabilidade() {
+        return "Disparo Perfurante";
+    }
+
+    @Override
+    public int getCustoManaHabilidade() {
+        return 14;
+    }
+
+    @Override
+    public String getDescricaoHabilidade() {
+        return "Dispara projétil perfurante em ponto fraco (145% ATQ + 8 * Reação Elemental).";
+    }
+
+    @Override
+    public String getDescricaoPassiva() {
+        return "Olho de Falcão: 28% de chance de acerto crítico (causa 150% de dano).";
     }
 }

@@ -66,15 +66,39 @@ public abstract class Heroi extends Entidade {
         return this.turnosQueimando > 0;
     }
 
+    public int getTurnosQueimando() {
+        return this.turnosQueimando;
+    }
+
     public String processarEfeitosInicioTurno() {
+        // Mantido por compatibilidade
+        return "";
+    }
+
+    public String processarEfeitosFimTurno() {
         if (this.turnosQueimando > 0) {
             this.turnosQueimando--;
             this.hpAtual = Math.max(0, this.hpAtual - this.danoQueimadura);
-            String msg = "🔥 [QUEIMADURA] " + this.nome + " sofreu " + this.danoQueimadura
-                    + " de dano contínuo de fogo! (Turnos restantes: " + this.turnosQueimando + ")\n";
-            return msg;
+            return "\n🔥 [QUEIMADURA RESIDUAL] " + this.nome + " sofreu " + this.danoQueimadura
+                    + " de dano contínuo de fogo! (Turnos restantes: " + this.turnosQueimando + ")";
         }
         return "";
+    }
+
+    @Override
+    public void atacar(Combativel alvo) {
+        atacar(alvo, false);
+    }
+
+    @Override
+    public void atacar(Combativel alvo, boolean critico) {
+        if (alvo != null && alvo.estaVivo()) {
+            int dano = this.ataque;
+            if (critico) {
+                dano = (int) (dano * 1.5);
+            }
+            alvo.receberDano(dano);
+        }
     }
 
     public void usarItem(String nomeItem) throws ItemNaoEncontradoException {
@@ -82,6 +106,11 @@ public abstract class Heroi extends Entidade {
     }
 
     public abstract void usarHabilidade(Combativel alvo) throws ManaInsuficienteException;
+
+    public abstract String getNomeHabilidade();
+    public abstract int getCustoManaHabilidade();
+    public abstract String getDescricaoHabilidade();
+    public abstract String getDescricaoPassiva();
 
     public boolean gastarMana(int custo) {
         if (this.manaAtual >= custo) {

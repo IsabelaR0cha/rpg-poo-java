@@ -20,6 +20,13 @@ public class Jogo {
     private boolean vitoriaFinal;
     private static final Random random = new Random();
 
+    // Dados de suporte para Modal de Recompensa de Baú e Subida de Nível
+    private boolean houveEventoRecompensa = false;
+    private boolean subiuNivelNoTurno = false;
+    private Item ultimoItemRecebido = null;
+    private String ultimoEventoNome = null;
+    private String ultimoEventoDescricao = null;
+
     public Jogo(Heroi heroi) {
         this.heroi = heroi;
         this.guardioesAndares = new ArrayList<>();
@@ -32,37 +39,81 @@ public class Jogo {
     }
 
     private void inicializarAndares() {
-        // 4 andares temáticos e balanceados da Torre dos Elementos
+        // 4 andares temáticos da Torre dos Elementos (Spiral Abyss theme)
         this.guardioesAndares.add(new Monstro("Slime Gigante Pyro", 85, 19, 6, 1, Elemento.PYRO));
         this.guardioesAndares.add(new Monstro("Espectro das Marés", 120, 26, 8, 2, Elemento.HYDRO));
         this.guardioesAndares.add(new Monstro("Guardião dos Ventos", 155, 33, 10, 3, Elemento.ANEMO));
         this.guardioesAndares.add(new Monstro("Arconte da Tempestade", 215, 42, 14, 4, Elemento.ELECTRO));
     }
 
-    private void iniciarBatalhaDoAndar() {
+    public void iniciarBatalhaDoAndar() {
         if (this.andarAtual < this.guardioesAndares.size()) {
             Monstro monstroDoAndar = this.guardioesAndares.get(this.andarAtual);
             this.batalhaAtual = new Batalha(this.heroi, monstroDoAndar);
         }
     }
 
+    public void limparEventoRecompensa() {
+        this.houveEventoRecompensa = false;
+        this.subiuNivelNoTurno = false;
+        this.ultimoItemRecebido = null;
+        this.ultimoEventoNome = null;
+        this.ultimoEventoDescricao = null;
+    }
+
     public String atacarNoTurno() {
+        limparEventoRecompensa();
+        if (this.jogoFinalizado) {
+            return "O jogo já foi finalizado. Inicie um Novo Jogo ou Carregue um Checkpoint.";
+        }
+        if (this.batalhaAtual == null) {
+            return "Nenhuma batalha ativa no momento.";
+        }
+        if (this.batalhaAtual.batalhaEncerrada()) {
+            return "A batalha já foi encerrada." + verificarPosTurno();
+        }
+
         String resultado = this.batalhaAtual.executarAtaqueBasico();
         return resultado + verificarPosTurno();
     }
 
     public String usarHabilidadeNoTurno() throws ManaInsuficienteException {
+        limparEventoRecompensa();
+        if (this.jogoFinalizado) {
+            return "O jogo já foi finalizado. Inicie um Novo Jogo ou Carregue um Checkpoint.";
+        }
+        if (this.batalhaAtual == null) {
+            return "Nenhuma batalha ativa no momento.";
+        }
+        if (this.batalhaAtual.batalhaEncerrada()) {
+            return "A batalha já foi encerrada." + verificarPosTurno();
+        }
+
         String resultado = this.batalhaAtual.executarHabilidade();
         return resultado + verificarPosTurno();
     }
 
     public String usarItemNoTurno(String nomeItem) throws ItemNaoEncontradoException {
+        limparEventoRecompensa();
+        if (this.jogoFinalizado) {
+            return "O jogo já foi finalizado. Inicie um Novo Jogo ou Carregue um Checkpoint.";
+        }
+        if (this.batalhaAtual == null) {
+            return "Nenhuma batalha ativa no momento.";
+        }
+        if (this.batalhaAtual.batalhaEncerrada()) {
+            return "A batalha já foi encerrada." + verificarPosTurno();
+        }
+
         String resultado = this.batalhaAtual.executarUsoItem(nomeItem);
         return resultado + verificarPosTurno();
     }
 
     private String verificarPosTurno() {
-        if (!this.batalhaAtual.batalhaEncerrada()) {
+        if (this.jogoFinalizado) {
+            return "";
+        }
+        if (this.batalhaAtual == null || !this.batalhaAtual.batalhaEncerrada()) {
             return "";
         }
 
@@ -71,9 +122,14 @@ public class Jogo {
 
             // Caso tenha vencido um Mímico surpresa
             if (monstroDerrotado.isMimico()) {
-                Item recompensaLendaria = new Item("Elixir dos Arcontes", TipoItem.CURA, 75);
+                Item recompensaLendaria = new Item("Elixir dos Arcontes", TipoItem.CURA, 75, "Restaura 75 pontos de vida e regenera a vitalidade por completo.");
                 this.heroi.getInventario().adicionarItem(recompensaLendaria);
                 this.andarAtual++;
+
+                this.houveEventoRecompensa = true;
+                this.ultimoItemRecebido = recompensaLendaria;
+                this.ultimoEventoNome = "👑 Baú Lendário dos Arcontes";
+                this.ultimoEventoDescricao = "Você eliminou o Mímico Voraz e encontrou o sagrado " + recompensaLendaria.getNome() + "!";
 
                 if (this.andarAtual >= this.guardioesAndares.size()) {
                     this.jogoFinalizado = true;
@@ -86,13 +142,17 @@ public class Jogo {
                 }
             }
 
-            // Derrotou o guardião do andar
+            // Derrotou o guardião principal do andar -> sobe de nível
             this.heroi.subirNivel();
+            this.subiuNivelNoTurno = true;
 
             // Se derrotou o último chefe (Andar 4)
             if (this.andarAtual >= this.guardioesAndares.size() - 1) {
                 this.jogoFinalizado = true;
                 this.vitoriaFinal = true;
+                this.houveEventoRecompensa = true;
+                this.ultimoEventoNome = "🏆 Triunfo sobre a Torre dos Elementos";
+                this.ultimoEventoDescricao = "Você subjugou o Arconte da Tempestade e libertou o fluxo elemental da Torre!";
                 return "\n\n🏆 [VITÓRIA ÉPICA] Você subjugou o Arconte da Tempestade e conquistou a Torre dos Elementos!";
             }
 
@@ -105,6 +165,10 @@ public class Jogo {
                 Monstro mimico = new Monstro("Mímico Voraz", 80 + (this.andarAtual * 20), 22 + (this.andarAtual * 5), 7, this.andarAtual + 1, elementoMimico, true);
                 this.batalhaAtual = new Batalha(this.heroi, mimico);
 
+                this.houveEventoRecompensa = true;
+                this.ultimoEventoNome = "⚠️ Emboscada: Baú Mímico!";
+                this.ultimoEventoDescricao = "Ao abrir o baú dourado das ruínas, presas afiadas saltam de dentro! Um Mímico Voraz [" + elementoMimico + "] atacou!";
+
                 return "\n\n[SUBIU DE NÍVEL] Você avançou para o Nível " + this.heroi.getNivel() + "!"
                         + "\n⚠️ [EVENTO SURPRESA: BAÚ MÍMICO!]"
                         + "\nAo abrir o baú dourado das ruínas, dentes e garras afiadas saltam de dentro!"
@@ -115,6 +179,10 @@ public class Jogo {
                 this.heroi.recuperarMana(35);
                 this.andarAtual++;
                 iniciarBatalhaDoAndar();
+
+                this.houveEventoRecompensa = true;
+                this.ultimoEventoNome = "✨ Fonte Mística Sagrada";
+                this.ultimoEventoDescricao = "Você bebeu das águas sagradas entre as ruínas e recuperou +50 de Vida (HP) e +35 de Energia (Mana)!";
 
                 return "\n\n[SUBIU DE NÍVEL] Você avançou para o Nível " + this.heroi.getNivel() + "!"
                         + "\n✨ [EVENTO: FONTE MÍSTICA]"
@@ -128,6 +196,10 @@ public class Jogo {
                 this.andarAtual++;
                 iniciarBatalhaDoAndar();
 
+                this.houveEventoRecompensa = true;
+                this.ultimoEventoNome = "🏛️ Altar dos Titãs";
+                this.ultimoEventoDescricao = "Você tocou a relíquia central e obteve a bênção elemental permanente: +5 de Ataque e +2 de Defesa!";
+
                 return "\n\n[SUBIU DE NÍVEL] Você avançou para o Nível " + this.heroi.getNivel() + "!"
                         + "\n🏛️ [EVENTO: ALTAR DOS TITÃS]"
                         + "\nVocê tocou a relíquia no altar central e absorveu essência pura: +5 de Ataque e +2 de Defesa permanentes!"
@@ -138,6 +210,11 @@ public class Jogo {
                 this.heroi.getInventario().adicionarItem(recompensaBau);
                 this.andarAtual++;
                 iniciarBatalhaDoAndar();
+
+                this.houveEventoRecompensa = true;
+                this.ultimoItemRecebido = recompensaBau;
+                this.ultimoEventoNome = "🎁 Baú de Tesouro do Andar " + (this.andarAtual);
+                this.ultimoEventoDescricao = "Você desvendou o segredo do baú e encontrou: " + recompensaBau.getNome() + "!";
 
                 return "\n\n[SUBIU DE NÍVEL] Você avançou para o Nível " + this.heroi.getNivel() + "!"
                         + "\n🎁 [EVENTO: BAÚ DE TESOURO]"
@@ -153,11 +230,11 @@ public class Jogo {
 
     private Item abrirBauDoAndar(int numeroAndar) {
         if (numeroAndar == 1) {
-            return new Item("Poção de Cura Maior", TipoItem.CURA, 45);
+            return new Item("Poção de Cura Maior", TipoItem.CURA, 45, "Poção alquímica refinada que cura 45 HP e alivia queimaduras.");
         } else if (numeroAndar == 2) {
-            return new Item("Éter Concentrado", TipoItem.MANA, 40);
+            return new Item("Éter Concentrado", TipoItem.MANA, 40, "Frasco de essência arcana que restaura 40 de Mana.");
         } else {
-            return new Item("Elixir Elemental Sagrado", TipoItem.CURA, 65);
+            return new Item("Elixir Elemental Sagrado", TipoItem.CURA, 65, "Elixir lendário que cura 65 HP e purifica o corpo de debuffs.");
         }
     }
 
@@ -180,12 +257,36 @@ public class Jogo {
         return this.andarAtual + 1;
     }
 
+    public int getAndarCheckpoint() {
+        return this.andarAtual + 1;
+    }
+
     public boolean isJogoFinalizado() {
         return this.jogoFinalizado;
     }
 
     public boolean isVitoriaFinal() {
         return this.vitoriaFinal;
+    }
+
+    public boolean isHouveEventoRecompensa() {
+        return this.houveEventoRecompensa;
+    }
+
+    public boolean isSubiuNivelNoTurno() {
+        return this.subiuNivelNoTurno;
+    }
+
+    public Item getUltimoItemRecebido() {
+        return this.ultimoItemRecebido;
+    }
+
+    public String getUltimoEventoNome() {
+        return this.ultimoEventoNome;
+    }
+
+    public String getUltimoEventoDescricao() {
+        return this.ultimoEventoDescricao;
     }
 
     public static Jogo restaurarJogo(Heroi heroi, int indiceAndar) {
