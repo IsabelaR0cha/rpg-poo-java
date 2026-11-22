@@ -89,6 +89,7 @@ public class TelaJogo extends JFrame {
     private JButton btnMochila;
     private JButton btnSalvar;
     private JButton btnCarregar;
+    private JButton btnReiniciar;
 
     public TelaJogo() {
         super("Torre dos Elementos — Diário de Aventuras RPG");
@@ -514,18 +515,21 @@ public class TelaJogo extends JFrame {
         btnMochila = TemaFantasia.criarBotaoMadeira("🎒 Abrir Mochila", new Color(46, 125, 50));
         btnSalvar = TemaFantasia.criarBotaoMadeira("💾 Salvar Checkpoint", new Color(180, 83, 9));
         btnCarregar = TemaFantasia.criarBotaoMadeira("📂 Carregar", TemaFantasia.MADEIRA_MEDIA);
+        btnReiniciar = TemaFantasia.criarBotaoMadeira("📜 Novo Herói", new Color(110, 71, 42));
 
         btnAtacar.addActionListener(e -> executarAtaque());
         btnHabilidade.addActionListener(e -> executarHabilidade());
         btnMochila.addActionListener(e -> abrirMochila());
         btnSalvar.addActionListener(e -> salvarProgresso());
         btnCarregar.addActionListener(e -> carregarJogoSalvo());
+        btnReiniciar.addActionListener(e -> exibirTela(TELA_SELECAO));
 
         painelAcoes.add(btnAtacar);
         painelAcoes.add(btnHabilidade);
         painelAcoes.add(btnMochila);
         painelAcoes.add(btnSalvar);
         painelAcoes.add(btnCarregar);
+        painelAcoes.add(btnReiniciar);
 
         painel.add(painelAcoes, BorderLayout.SOUTH);
 
@@ -632,6 +636,20 @@ public class TelaJogo extends JFrame {
             jogo.limparEventoRecompensa();
             atualizarInterfaceBatalha();
         }
+
+        // Se o jogo encerrou (derrota ou vitória final), abre o modal de fim de jogo com opções
+        if (jogo != null && jogo.isJogoFinalizado()) {
+            DialogFimDeJogo dlgFim = new DialogFimDeJogo(
+                    this,
+                    jogo.isVitoriaFinal(),
+                    jogo.getHeroi(),
+                    jogo.getNumeroAndarAtual(),
+                    persistencia.existeSave(),
+                    () -> carregarJogoSalvo(),
+                    () -> exibirTela(TELA_SELECAO)
+            );
+            dlgFim.setVisible(true);
+        }
     }
 
     private void salvarProgresso() {
@@ -728,6 +746,8 @@ public class TelaJogo extends JFrame {
         btnHabilidade.setEnabled(partidaAtiva);
         btnMochila.setEnabled(partidaAtiva);
         btnSalvar.setEnabled(partidaAtiva);
+        btnCarregar.setEnabled(true);
+        btnReiniciar.setEnabled(true);
     }
 
     private void adicionarLog(String texto) {
