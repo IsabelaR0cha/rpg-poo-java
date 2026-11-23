@@ -20,26 +20,30 @@ import javax.swing.JPanel;
 public class DialogRecompensaBau extends JDialog {
 
     public DialogRecompensaBau(Frame parent, int nivelNovo, String eventoNome, String eventoDescricao, Item itemRecebido) {
-        super(parent, "Recompensa do Andar — Torre dos Elementos", true);
-        configurarDialogo();
-        inicializarComponentes(nivelNovo, eventoNome, eventoDescricao, itemRecebido);
+        this(parent, nivelNovo, true, eventoNome, eventoDescricao, itemRecebido);
     }
 
-    private void configurarDialogo() {
-        setSize(520, 390);
+    public DialogRecompensaBau(Frame parent, int nivelNovo, boolean subiuNivel, String eventoNome, String eventoDescricao, Item itemRecebido) {
+        super(parent, "Recompensa do Andar — Torre dos Elementos", true);
+        configurarDialogo(subiuNivel);
+        inicializarComponentes(nivelNovo, subiuNivel, eventoNome, eventoDescricao, itemRecebido);
+    }
+
+    private void configurarDialogo(boolean subiuNivel) {
+        setSize(520, subiuNivel ? 390 : 290);
         setLocationRelativeTo(getParent());
         setResizable(false);
         getContentPane().setBackground(TemaFantasia.PERGAMINHO_CLARO);
         setLayout(new BorderLayout(10, 10));
     }
 
-    private void inicializarComponentes(int nivelNovo, String eventoNome, String eventoDescricao, Item itemRecebido) {
+    private void inicializarComponentes(int nivelNovo, boolean subiuNivel, String eventoNome, String eventoDescricao, Item itemRecebido) {
         // Cabeçalho da Vitória
         JPanel painelTopo = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 10));
         painelTopo.setBackground(TemaFantasia.PERGAMINHO_MEDIO);
         painelTopo.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, TemaFantasia.MADEIRA_ESCURA));
 
-        JLabel lblTitulo = new JLabel("🏆 ANDAR CONCLUÍDO!", JLabel.CENTER);
+        JLabel lblTitulo = new JLabel(subiuNivel ? "🏆 ANDAR CONCLUÍDO!" : "Mímico Derrotado!", JLabel.CENTER);
         lblTitulo.setFont(new Font("Serif", Font.BOLD, 20));
         lblTitulo.setForeground(TemaFantasia.MADEIRA_ESCURA);
         painelTopo.add(lblTitulo);
@@ -51,27 +55,29 @@ public class DialogRecompensaBau extends JDialog {
         painelCentro.setOpaque(false);
         painelCentro.setBorder(BorderFactory.createEmptyBorder(10, 16, 10, 16));
 
-        // 1. Card de Subida de Nível (Level Up)
-        JPanel cardLevelUp = new JPanel(new BorderLayout(6, 4));
-        cardLevelUp.setBackground(TemaFantasia.PERGAMINHO_DESTACADO);
-        cardLevelUp.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(TemaFantasia.OURO_BORDA, 2, true),
-                BorderFactory.createEmptyBorder(8, 12, 8, 12)
-        ));
+        if (subiuNivel) {
+            // 1. Card de Subida de Nível (Level Up)
+            JPanel cardLevelUp = new JPanel(new BorderLayout(6, 4));
+            cardLevelUp.setBackground(TemaFantasia.PERGAMINHO_DESTACADO);
+            cardLevelUp.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(TemaFantasia.OURO_BORDA, 2, true),
+                    BorderFactory.createEmptyBorder(8, 12, 8, 12)
+            ));
 
-        JLabel lblNivel = new JLabel("🆙 VOCÊ SUBIU PARA O NÍVEL " + nivelNovo + "!");
-        lblNivel.setFont(new Font("Serif", Font.BOLD, 15));
-        lblNivel.setForeground(new Color(180, 83, 9));
+            JLabel lblNivel = new JLabel("🆙 VOCÊ SUBIU PARA O NÍVEL " + nivelNovo + "!");
+            lblNivel.setFont(new Font("Serif", Font.BOLD, 15));
+            lblNivel.setForeground(new Color(180, 83, 9));
 
-        JLabel lblBonus = new JLabel("<html>Bônus de Atributos: <b>+15 HP Máximo</b> | <b>+8 Mana Máxima</b> | <b>+4 Ataque</b> | <b>+2 Defesa</b><br>"
-                + "<small style='color:#5C3A21;'>Vitalidade e energia foram parcialmente restauradas com a vitória!</small></html>");
-        lblBonus.setFont(TemaFantasia.FONTE_TEXTO);
-        lblBonus.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
+            JLabel lblBonus = new JLabel("<html>Bônus de Atributos: <b>+15 HP Máximo</b> | <b>+8 Mana Máxima</b> | <b>+4 Ataque</b> | <b>+2 Defesa</b><br>"
+                    + "<small style='color:#5C3A21;'>Vitalidade e energia foram parcialmente restauradas com a vitória!</small></html>");
+            lblBonus.setFont(TemaFantasia.FONTE_TEXTO);
+            lblBonus.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
 
-        cardLevelUp.add(lblNivel, BorderLayout.NORTH);
-        cardLevelUp.add(lblBonus, BorderLayout.CENTER);
-        painelCentro.add(cardLevelUp);
-        painelCentro.add(Box.createVerticalStrut(10));
+            cardLevelUp.add(lblNivel, BorderLayout.NORTH);
+            cardLevelUp.add(lblBonus, BorderLayout.CENTER);
+            painelCentro.add(cardLevelUp);
+            painelCentro.add(Box.createVerticalStrut(10));
+        }
 
         // 2. Card de Recompensa de Baú / Evento
         JPanel cardEvento = new JPanel(new BorderLayout(6, 4));
@@ -108,7 +114,7 @@ public class DialogRecompensaBau extends JDialog {
             lblItemBadge.setFont(TemaFantasia.FONTE_TEXTO_BOLD);
             lblItemBadge.setForeground(itemRecebido.getTipo() == TipoItem.CURA ? TemaFantasia.COR_ANEMO : TemaFantasia.COR_HYDRO);
 
-            JLabel lblItemNome = new JLabel("<b>" + itemRecebido.getNome() + "</b>");
+            JLabel lblItemNome = new JLabel("<html><b>" + itemRecebido.getNome() + "</b></html>");
             lblItemNome.setFont(TemaFantasia.FONTE_TEXTO);
             lblItemNome.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
 
