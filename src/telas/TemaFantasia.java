@@ -92,7 +92,7 @@ public final class TemaFantasia {
             return BorderFactory.createCompoundBorder(composta, BorderFactory.createEmptyBorder(6, 8, 6, 8));
         }
 
-        return BorderFactory.createTitledBorder(
+        Border titled = BorderFactory.createTitledBorder(
                 composta,
                 " " + titulo + " ",
                 TitledBorder.LEFT,
@@ -100,12 +100,27 @@ public final class TemaFantasia {
                 FONTE_SUBTITULO,
                 MADEIRA_ESCURA
         );
+        return BorderFactory.createCompoundBorder(titled, BorderFactory.createEmptyBorder(6, 10, 6, 10));
     }
 
     public static Border criarBordaMetalica(Color corDestaque) {
         Border bordaExterna = BorderFactory.createLineBorder(METAL_ESCURO, 2, true);
         Border bordaInterna = BorderFactory.createLineBorder(corDestaque != null ? corDestaque : OURO_BORDA, 2);
         return BorderFactory.createCompoundBorder(bordaExterna, bordaInterna);
+    }
+
+    public static Border criarBordaMetalicaComTitulo(String titulo, Color corDestaque) {
+        Color destaque = corDestaque != null ? corDestaque : OURO_BORDA;
+        Border bordaMetalica = criarBordaMetalica(destaque);
+        Border titled = BorderFactory.createTitledBorder(
+                bordaMetalica,
+                " " + titulo + " ",
+                TitledBorder.LEFT,
+                TitledBorder.TOP,
+                FONTE_SUBTITULO,
+                destaque
+        );
+        return BorderFactory.createCompoundBorder(titled, BorderFactory.createEmptyBorder(6, 10, 6, 10));
     }
 
     public static JButton criarBotaoMadeira(String texto, Color corDestaque) {

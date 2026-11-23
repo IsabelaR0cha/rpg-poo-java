@@ -12,6 +12,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -33,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.Scrollable;
 import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultCaret;
 import modelo.Arcanista;
@@ -109,6 +111,7 @@ public class TelaJogo extends JFrame {
 
         configurarJanela();
         inicializarComponentes();
+        configurarTooltips();
         atualizarPreviaSelecao();
         exibirTela(TELA_SELECAO);
     }
@@ -372,9 +375,14 @@ public class TelaJogo extends JFrame {
     }
 
     private JPanel criarPainelPreviaCompleta() {
-        JPanel painel = new JPanel(new GridLayout(2, 2, 8, 4));
+        JPanel painel = new JPanel();
+        painel.setLayout(new BoxLayout(painel, BoxLayout.Y_AXIS));
         painel.setBackground(TemaFantasia.PERGAMINHO_DESTACADO);
         painel.setBorder(TemaFantasia.criarBordaMadeiraPergaminho("Ficha de Prévia do Personagem"));
+
+        JPanel linhaSuperior = new JPanel(new GridLayout(1, 2, 16, 0));
+        linhaSuperior.setOpaque(false);
+        linhaSuperior.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         lblPreviaNomeClasse = new JLabel("-");
         lblPreviaNomeClasse.setFont(new Font("Serif", Font.BOLD, 14));
@@ -384,18 +392,29 @@ public class TelaJogo extends JFrame {
         lblPreviaAtributos.setFont(TemaFantasia.FONTE_TEXTO_BOLD);
         lblPreviaAtributos.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
 
+        linhaSuperior.add(lblPreviaNomeClasse);
+        linhaSuperior.add(lblPreviaAtributos);
+
+        JPanel linhaInferior = new JPanel(new GridLayout(1, 2, 16, 0));
+        linhaInferior.setOpaque(false);
+        linhaInferior.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         lblPreviaHabilidade = new JLabel("-");
         lblPreviaHabilidade.setFont(TemaFantasia.FONTE_TEXTO);
         lblPreviaHabilidade.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
+        lblPreviaHabilidade.setVerticalAlignment(JLabel.TOP);
 
         lblPreviaPassiva = new JLabel("-");
         lblPreviaPassiva.setFont(TemaFantasia.FONTE_PEQUENA);
         lblPreviaPassiva.setForeground(TemaFantasia.TEXTO_SEPIA_MEDIO);
+        lblPreviaPassiva.setVerticalAlignment(JLabel.TOP);
 
-        painel.add(lblPreviaNomeClasse);
-        painel.add(lblPreviaAtributos);
-        painel.add(lblPreviaHabilidade);
-        painel.add(lblPreviaPassiva);
+        linhaInferior.add(lblPreviaHabilidade);
+        linhaInferior.add(lblPreviaPassiva);
+
+        painel.add(linhaSuperior);
+        painel.add(Box.createVerticalStrut(6));
+        painel.add(linhaInferior);
 
         return painel;
     }
@@ -410,10 +429,10 @@ public class TelaJogo extends JFrame {
         lblPreviaAtributos.setText("HP Base: " + h.getHpMax() + "  |  Mana: " + h.getManaMax()
                 + "  |  ATQ: " + h.getAtaque() + "  |  DEF: " + h.getDefesa());
 
-        lblPreviaHabilidade.setText("<html><b>Habilidade:</b> " + h.getNomeHabilidade()
-                + " (Custo: " + h.getCustoManaHabilidade() + " Mana)<br><small>" + h.getDescricaoHabilidade() + "</small></html>");
+        lblPreviaHabilidade.setText("<html><div style='width:305px;'><b>Habilidade:</b> " + h.getNomeHabilidade()
+                + " (Custo: " + h.getCustoManaHabilidade() + " Mana)<br><small>" + h.getDescricaoHabilidade() + "</small></div></html>");
 
-        lblPreviaPassiva.setText("<html><b>Passiva:</b> " + h.getDescricaoPassiva() + "</html>");
+        lblPreviaPassiva.setText("<html><div style='width:305px;'><b>Passiva:</b> " + h.getDescricaoPassiva() + "</div></html>");
     }
 
     // =========================================================================
@@ -456,44 +475,59 @@ public class TelaJogo extends JFrame {
         lblHeroiTitulo = new JLabel("Aether (Nv. 1) — Espadachim [PYRO]");
         lblHeroiTitulo.setFont(TemaFantasia.FONTE_SUBTITULO);
         lblHeroiTitulo.setForeground(TemaFantasia.MADEIRA_ESCURA);
+        lblHeroiTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblHeroiTitulo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 28));
 
         barraHpHeroi = TemaFantasia.criarBarraProgresso("HP: 115 / 115", new Color(46, 125, 50), TemaFantasia.MADEIRA_ESCURA);
+        barraHpHeroi.setAlignmentX(Component.LEFT_ALIGNMENT);
+        barraHpHeroi.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
+
         barraManaHeroi = TemaFantasia.criarBarraProgresso("Mana: 40 / 40", new Color(25, 118, 210), TemaFantasia.MADEIRA_ESCURA);
+        barraManaHeroi.setAlignmentX(Component.LEFT_ALIGNMENT);
+        barraManaHeroi.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
 
         lblHeroiStatus = new JLabel("ATQ: 22 | DEF: 10 | Mochila: 2 itens");
         lblHeroiStatus.setFont(TemaFantasia.FONTE_TEXTO);
         lblHeroiStatus.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
+        lblHeroiStatus.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblHeroiStatus.setMaximumSize(new Dimension(Integer.MAX_VALUE, 26));
 
         cardBatalhaHeroi.add(lblHeroiTitulo);
-        cardBatalhaHeroi.add(Box.createVerticalStrut(4));
+        cardBatalhaHeroi.add(Box.createVerticalStrut(6));
         cardBatalhaHeroi.add(barraHpHeroi);
-        cardBatalhaHeroi.add(Box.createVerticalStrut(4));
+        cardBatalhaHeroi.add(Box.createVerticalStrut(6));
         cardBatalhaHeroi.add(barraManaHeroi);
-        cardBatalhaHeroi.add(Box.createVerticalStrut(4));
+        cardBatalhaHeroi.add(Box.createVerticalStrut(6));
         cardBatalhaHeroi.add(lblHeroiStatus);
 
         // Card do Monstro
         cardBatalhaMonstro = new JPanel();
         cardBatalhaMonstro.setLayout(new BoxLayout(cardBatalhaMonstro, BoxLayout.Y_AXIS));
         cardBatalhaMonstro.setBackground(TemaFantasia.PERGAMINHO_DESTACADO);
-        cardBatalhaMonstro.setBorder(TemaFantasia.criarBordaMadeiraPergaminho("Guardião do Andar"));
+        cardBatalhaMonstro.setBorder(TemaFantasia.criarBordaMetalicaComTitulo("Guardião do Andar", TemaFantasia.COR_PYRO));
 
         lblMonstroTitulo = new JLabel("Slime Gigante Pyro [PYRO]");
         lblMonstroTitulo.setFont(TemaFantasia.FONTE_SUBTITULO);
         lblMonstroTitulo.setForeground(TemaFantasia.COR_PYRO);
+        lblMonstroTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblMonstroTitulo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 28));
 
         barraHpMonstro = TemaFantasia.criarBarraProgresso("HP: 85 / 85", TemaFantasia.COR_PYRO, TemaFantasia.MADEIRA_ESCURA);
+        barraHpMonstro.setAlignmentX(Component.LEFT_ALIGNMENT);
+        barraHpMonstro.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
 
         lblMonstroStatus = new JLabel("ATQ: 19 | DEF: 6 | Andar 1");
         lblMonstroStatus.setFont(TemaFantasia.FONTE_TEXTO);
         lblMonstroStatus.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
+        lblMonstroStatus.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblMonstroStatus.setMaximumSize(new Dimension(Integer.MAX_VALUE, 26));
 
         cardBatalhaMonstro.add(lblMonstroTitulo);
-        cardBatalhaMonstro.add(Box.createVerticalStrut(4));
+        cardBatalhaMonstro.add(Box.createVerticalStrut(6));
         cardBatalhaMonstro.add(barraHpMonstro);
         cardBatalhaMonstro.add(Box.createVerticalStrut(12));
         cardBatalhaMonstro.add(lblMonstroStatus);
-        cardBatalhaMonstro.add(Box.createVerticalStrut(14));
+        cardBatalhaMonstro.add(Box.createVerticalGlue());
 
         painelCombatentes.add(cardBatalhaHeroi);
         painelCombatentes.add(cardBatalhaMonstro);
@@ -538,14 +572,14 @@ public class TelaJogo extends JFrame {
         painel.add(painelCentro, BorderLayout.CENTER);
 
         // Inferior: Botões de Ação de Combate
-        JPanel painelAcoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 8));
+        JPanel painelAcoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 8));
         painelAcoes.setBackground(TemaFantasia.PERGAMINHO_MEDIO);
         painelAcoes.setBorder(BorderFactory.createMatteBorder(3, 0, 0, 0, TemaFantasia.MADEIRA_ESCURA));
 
         btnAtacar = TemaFantasia.criarBotaoMadeira("⚔️ Atacar", new Color(180, 40, 30));
         btnHabilidade = TemaFantasia.criarBotaoMadeira("✨ Habilidade", new Color(25, 118, 210));
-        btnMochila = TemaFantasia.criarBotaoMadeira("🎒 Abrir Mochila", new Color(46, 125, 50));
-        btnSalvar = TemaFantasia.criarBotaoMadeira("💾 Salvar Checkpoint", new Color(180, 83, 9));
+        btnMochila = TemaFantasia.criarBotaoMadeira("🎒 Mochila", new Color(46, 125, 50));
+        btnSalvar = TemaFantasia.criarBotaoMadeira("💾 Salvar", new Color(180, 83, 9));
         btnCarregar = TemaFantasia.criarBotaoMadeira("📂 Carregar", TemaFantasia.MADEIRA_MEDIA);
         btnReiniciar = TemaFantasia.criarBotaoMadeira("📜 Novo Herói", new Color(110, 71, 42));
 
@@ -749,6 +783,7 @@ public class TelaJogo extends JFrame {
                     JOptionPane.INFORMATION_MESSAGE
             );
             adicionarLog("💾 [CHECKPOINT SALVO] Progresso preservado no início do Andar " + andarCheckpoint + ".");
+            atualizarTooltipsCheckpoint();
         } catch (PersistenciaException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro ao Salvar", JOptionPane.ERROR_MESSAGE);
         }
@@ -791,13 +826,26 @@ public class TelaJogo extends JFrame {
         barraHpHeroi.setValue(heroi.getHpAtual());
         barraHpHeroi.setString("HP: " + heroi.getHpAtual() + " / " + heroi.getHpMax());
         barraHpHeroi.setForeground(heroi.getHpAtual() < (heroi.getHpMax() * 0.35) ? TemaFantasia.COR_PYRO : new Color(46, 125, 50));
+        String dicaHpHeroi = "Vida do herói: " + heroi.getHpAtual() + " de " + heroi.getHpMax();
+        if (heroi.estaQueimando()) {
+            dicaHpHeroi += " (Queimadura ativa por " + heroi.getTurnosQueimando() + " turno(s))";
+        } else if (heroi.getHpAtual() < (heroi.getHpMax() * 0.35)) {
+            dicaHpHeroi += " (HP crítico! Considere usar uma poção de cura)";
+        }
+        barraHpHeroi.setToolTipText(dicaHpHeroi);
 
         barraManaHeroi.setMaximum(heroi.getManaMax());
         barraManaHeroi.setValue(heroi.getManaAtual());
         barraManaHeroi.setString("Mana: " + heroi.getManaAtual() + " / " + heroi.getManaMax());
+        barraManaHeroi.setToolTipText("Mana atual: " + heroi.getManaAtual() + " / " + heroi.getManaMax()
+                + " (Habilidade custa " + heroi.getCustoManaHabilidade() + " MP)");
 
+        int qtdItens = heroi.getInventario().getItens().size();
+        String statusQueimadura = heroi.estaQueimando()
+                ? " | Queimando (" + heroi.getTurnosQueimando() + "t)"
+                : "";
         lblHeroiStatus.setText("ATQ: " + heroi.getAtaque() + " | DEF: " + heroi.getDefesa()
-                + " | Mochila: " + heroi.getInventario().getItens().size() + " itens");
+                + " | Mochila: " + qtdItens + (qtdItens == 1 ? " item" : " itens") + statusQueimadura);
 
         // 2. Atualização do Monstro
         Color corElementoMonstro = TemaFantasia.obterCorElemento(monstro.getElemento());
@@ -810,28 +858,108 @@ public class TelaJogo extends JFrame {
         barraHpMonstro.setValue(monstro.getHpAtual());
         barraHpMonstro.setString("HP: " + monstro.getHpAtual() + " / " + monstro.getHpMax());
         barraHpMonstro.setForeground(corElementoMonstro);
+        barraHpMonstro.setToolTipText("HP de " + monstro.getNome() + ": " + monstro.getHpAtual() + " / " + monstro.getHpMax());
 
         lblMonstroStatus.setText("ATQ: " + monstro.getAtaque() + " | DEF: " + monstro.getDefesa()
                 + " | Andar " + monstro.getAndar());
 
         // Moldura do Monstro adota a cor do elemento dominante
-        cardBatalhaMonstro.setBorder(TemaFantasia.criarBordaMetalica(corElementoMonstro));
+        cardBatalhaMonstro.setBorder(TemaFantasia.criarBordaMetalicaComTitulo(
+                monstro.isMimico() ? "Emboscada — Mímico Voraz" : "Guardião do Andar",
+                corElementoMonstro
+        ));
 
-        // 3. Banner do Andar Atual
-        String extra = monstro.isMimico() ? " — ⚠️ EMBOSCADA DE MÍMICO!" : " — Guardião Elemental";
-        lblAndarBanner.setText("Torre dos Elementos — Andar " + jogo.getNumeroAndarAtual() + " / 4" + extra);
-        lblAndarBanner.setForeground(corElementoMonstro);
+        // 3. Banner do Andar Atual e Alertas de Vitória/Derrota
+        if (jogo.isJogoFinalizado() && jogo.isVitoriaFinal()) {
+            painelCabecalhoAndar.setBackground(new Color(232, 245, 233));
+            lblAndarBanner.setText("VITÓRIA NA TORRE DOS ELEMENTOS — Todos os 4 Andares Conquistados!");
+            lblAndarBanner.setForeground(new Color(27, 94, 32));
+        } else if (jogo.isJogoFinalizado() && !jogo.isVitoriaFinal()) {
+            painelCabecalhoAndar.setBackground(new Color(253, 236, 234));
+            lblAndarBanner.setText("DERROTA NO ANDAR " + jogo.getNumeroAndarAtual()
+                    + " / 4 — Carregue o Checkpoint ou inicie um Novo Jogo");
+            lblAndarBanner.setForeground(TemaFantasia.COR_PYRO);
+        } else {
+            String extra = monstro.isMimico() ? " — ⚠️ EMBOSCADA DE MÍMICO!" : " — Guardião Elemental";
+            painelCabecalhoAndar.setBackground(TemaFantasia.PERGAMINHO_MEDIO);
+            lblAndarBanner.setText("Torre dos Elementos — Andar " + jogo.getNumeroAndarAtual() + " / 4" + extra);
+            lblAndarBanner.setForeground(corElementoMonstro);
+        }
 
-        // Estado dos Botões de Ação
+        // Estado e Dicas dos Botões de Ação
         boolean partidaAtiva = !jogo.isJogoFinalizado();
         btnAtacar.setEnabled(partidaAtiva);
         btnHabilidade.setEnabled(partidaAtiva);
+        btnHabilidade.setText("✨ Habilidade (" + heroi.getCustoManaHabilidade() + " MP)");
+        btnHabilidade.setToolTipText("<html><b>" + heroi.getNomeHabilidade() + "</b> ("
+                + heroi.getCustoManaHabilidade() + " Mana)<br>" + heroi.getDescricaoHabilidade() + "</html>");
         btnMochila.setEnabled(partidaAtiva);
+        btnMochila.setText("🎒 Mochila (" + qtdItens + ")");
         btnSalvar.setEnabled(partidaAtiva);
         btnCarregar.setEnabled(true);
         btnReiniciar.setEnabled(true);
         if (menuItemSalvar != null) {
             menuItemSalvar.setEnabled(partidaAtiva);
+        }
+        atualizarTooltipsCheckpoint();
+    }
+
+    private void configurarTooltips() {
+        tabSelecao.setToolTipText("Abre a ficha de criação e personalização do herói");
+        tabBatalha.setToolTipText("Alterna para a tela de combate na Torre dos Elementos");
+        campoNome.setToolTipText("Digite o nome do seu viajante (não utilize ';')");
+
+        for (int i = 0; i < nomesClasses.length; i++) {
+            Heroi exemplo = instanciarHeroi(nomesClasses[i], nomesClasses[i], Elemento.PYRO);
+            cardsClasse[i].setToolTipText("<html><b>" + nomesClasses[i] + "</b> — HP: " + exemplo.getHpMax()
+                    + " | Mana: " + exemplo.getManaMax() + " | ATQ: " + exemplo.getAtaque()
+                    + " | DEF: " + exemplo.getDefesa() + "<br>Habilidade: " + exemplo.getNomeHabilidade()
+                    + " (" + exemplo.getCustoManaHabilidade() + " MP)<br>" + exemplo.getDescricaoPassiva() + "</html>");
+        }
+
+        Elemento[] elementos = Elemento.values();
+        for (int i = 0; i < elementos.length; i++) {
+            botoesElementos[i].setToolTipText(obterDicaElemento(elementos[i]));
+        }
+
+        btnIniciar.setToolTipText("Inicia a aventura na Torre dos Elementos com o herói selecionado");
+        btnAtacar.setToolTipText("Realiza um ataque básico físico contra o guardião atual");
+        btnHabilidade.setToolTipText("Conjura a habilidade elemental da classe (consome Mana)");
+        btnMochila.setToolTipText("Abre o inventário para usar poções de cura ou éteres de mana");
+        btnSalvar.setToolTipText("Salva o progresso atual no arquivo save_jogo.txt");
+        btnReiniciar.setToolTipText("Retorna à criação de personagem para iniciar com um novo herói");
+        btnLimparLog.setToolTipText("Limpa todo o histórico exibido no diário de combate");
+        barraHpHeroi.setToolTipText("Vida atual do herói");
+        barraManaHeroi.setToolTipText("Mana disponível para conjurar habilidades elementais");
+        barraHpMonstro.setToolTipText("Vida restante do guardião do andar");
+
+        atualizarTooltipsCheckpoint();
+    }
+
+    private String obterDicaElemento(Elemento elem) {
+        switch (elem) {
+            case PYRO:
+                return "PYRO: forte contra Anemo (x1.5) e Electro (x1.4); fraco contra Hydro (x0.8)";
+            case HYDRO:
+                return "HYDRO: forte contra Pyro (x1.6) e Electro (x1.3)";
+            case ANEMO:
+                return "ANEMO: causa Dispersão Elemental (x1.35) contra qualquer outro elemento";
+            case ELECTRO:
+                return "ELECTRO: forte contra Hydro (x1.6) e Pyro (x1.3)";
+            default:
+                return elem.name();
+        }
+    }
+
+    private void atualizarTooltipsCheckpoint() {
+        String dica = persistencia.existeSave()
+                ? "Carrega o último checkpoint salvo em save_jogo.txt"
+                : "Nenhum checkpoint salvo encontrado no momento (save_jogo.txt)";
+        if (btnCarregarCheckpoint != null) {
+            btnCarregarCheckpoint.setToolTipText(dica);
+        }
+        if (btnCarregar != null) {
+            btnCarregar.setToolTipText(dica);
         }
     }
 
@@ -899,7 +1027,7 @@ public class TelaJogo extends JFrame {
 
     private void exibirGuiaDoJogo() {
         JDialog dialogo = new JDialog(this, "Guia da Torre e Elementos", true);
-        dialogo.setSize(640, 540);
+        dialogo.setSize(660, 560);
         dialogo.setLocationRelativeTo(this);
         dialogo.setResizable(false);
         dialogo.getContentPane().setBackground(TemaFantasia.PERGAMINHO_CLARO);
@@ -915,41 +1043,35 @@ public class TelaJogo extends JFrame {
         painelTopo.add(lblTitulo);
         dialogo.add(painelTopo, BorderLayout.NORTH);
 
-        JPanel painelConteudo = new JPanel();
+        JPanel painelConteudo = new PainelGuiaRolavel();
         painelConteudo.setLayout(new BoxLayout(painelConteudo, BoxLayout.Y_AXIS));
         painelConteudo.setBackground(TemaFantasia.PERGAMINHO_CLARO);
         painelConteudo.setBorder(BorderFactory.createEmptyBorder(10, 14, 10, 14));
 
-        String textoElementos = "<html><div style='width:500px;'>"
-                + "<b>Ciclo principal:</b> Pyro &rarr; Anemo &rarr; Electro &rarr; Hydro &rarr; Pyro<br><br>"
-                + "<b>Pyro:</b> x1.5 contra Anemo (Propagação) | x1.4 contra Electro (Sobrecarga) | x0.8 contra Hydro.<br>"
-                + "<b>Anemo:</b> x1.35 contra qualquer outro elemento (Dispersão Elemental).<br>"
-                + "<b>Electro:</b> x1.6 contra Hydro (Eletrocussão) | x1.3 contra Pyro (Sobrecarga).<br>"
-                + "<b>Hydro:</b> x1.6 contra Pyro (Vaporização) | x1.3 contra Electro (Condução Elétrica).<br>"
-                + "<b>Mesmo elemento:</b> x0.65 (Resistência Elemental: -35% de dano)."
-                + "</div></html>";
+        String textoElementos = "Ciclo principal: Pyro -> Anemo -> Electro -> Hydro -> Pyro\n\n"
+                + "• Pyro: x1.5 contra Anemo (Propagação) | x1.4 contra Electro (Sobrecarga) | x0.8 contra Hydro.\n"
+                + "• Anemo: x1.35 contra qualquer outro elemento (Dispersão Elemental).\n"
+                + "• Electro: x1.6 contra Hydro (Eletrocussão) | x1.3 contra Pyro (Sobrecarga).\n"
+                + "• Hydro: x1.6 contra Pyro (Vaporização) | x1.3 contra Electro (Condução Elétrica).\n"
+                + "• Mesmo elemento: x0.65 (Resistência Elemental: -35% de dano).";
 
-        String textoClasses = "<html><div style='width:500px;'>"
-                + "<b>Espadachim</b> (HP 115 | Mana 40 | ATQ 22 | DEF 10)<br>"
-                + "&bull; Habilidade: <i>Lâmina Elemental</i> (15 Mana) | Passiva: 16% de chance de esquiva.<br><br>"
-                + "<b>Arcanista</b> (HP 90 | Mana 75 | ATQ 25 | DEF 5)<br>"
-                + "&bull; Habilidade: <i>Explosão Arcana</i> (20 Mana) | Passiva: +15% de dano em reações da habilidade.<br><br>"
-                + "<b>Atirador</b> (HP 95 | Mana 55 | ATQ 24 | DEF 7)<br>"
-                + "&bull; Habilidade: <i>Disparo Perfurante</i> (14 Mana) | Passiva: 28% de chance de acerto crítico (150%).<br><br>"
-                + "<b>Catalisador</b> (HP 85 | Mana 80 | ATQ 23 | DEF 5)<br>"
-                + "&bull; Habilidade: <i>Ressonância Suprema</i> (22 Mana) | Passiva: ataques normais também aplicam reação elemental."
-                + "</div></html>";
+        String textoClasses = "• Espadachim (HP 115 | Mana 40 | ATQ 22 | DEF 10)\n"
+                + "  Habilidade: Lâmina Elemental (15 Mana) | Passiva: 16% de chance de esquiva.\n\n"
+                + "• Arcanista (HP 90 | Mana 75 | ATQ 25 | DEF 5)\n"
+                + "  Habilidade: Explosão Arcana (20 Mana) | Passiva: +15% de dano em reações da habilidade.\n\n"
+                + "• Atirador (HP 95 | Mana 55 | ATQ 24 | DEF 7)\n"
+                + "  Habilidade: Disparo Perfurante (14 Mana) | Passiva: 28% de chance de acerto crítico (150%).\n\n"
+                + "• Catalisador (HP 85 | Mana 80 | ATQ 23 | DEF 5)\n"
+                + "  Habilidade: Ressonância Suprema (22 Mana) | Passiva: ataques normais aplicam reação elemental.";
 
-        String textoTorre = "<html><div style='width:500px;'>"
-                + "<b>Andar 1:</b> Slime Gigante Pyro (PYRO) — pode causar queimadura por 2 turnos.<br>"
-                + "<b>Andar 2:</b> Espectro das Marés (HYDRO) — pode regenerar HP com o Manto das Marés.<br>"
-                + "<b>Andar 3:</b> Guardião dos Ventos (ANEMO) — 18% de esquiva e golpe Ciclone Cortante.<br>"
-                + "<b>Andar 4:</b> Arconte da Tempestade (ELECTRO) — chefe final que drena 10 de mana no Raio Cataclísmico.<br><br>"
-                + "<b>Eventos entre os andares:</b> Ao vencer um guardião, seu herói sobe de nível e pode encontrar um "
-                + "<b>Baú de Tesouro</b> (novas poções e elixires), uma <b>Fonte Mística</b> (+50 HP e +35 Mana), "
-                + "o <b>Altar dos Titãs</b> (+5 ATQ e +2 DEF permanentes) ou cair na emboscada de um "
-                + "<b>Baú Mímico</b> (combate surpresa contra o Mímico Voraz, que recompensa com o Elixir dos Arcontes)."
-                + "</div></html>";
+        String textoTorre = "• Andar 1: Slime Gigante Pyro (PYRO) — pode causar queimadura por 2 turnos.\n"
+                + "• Andar 2: Espectro das Marés (HYDRO) — pode regenerar HP com o Manto das Marés.\n"
+                + "• Andar 3: Guardião dos Ventos (ANEMO) — 18% de esquiva e golpe Ciclone Cortante.\n"
+                + "• Andar 4: Arconte da Tempestade (ELECTRO) — chefe final que drena 10 de mana no Raio Cataclísmico.\n\n"
+                + "Eventos entre os andares:\n"
+                + "Ao vencer um guardião, seu herói sobe de nível e pode encontrar um Baú de Tesouro (novas poções e elixires), "
+                + "uma Fonte Mística (+50 HP e +35 Mana), o Altar dos Titãs (+5 ATQ e +2 DEF permanentes) ou cair na emboscada "
+                + "de um Baú Mímico (combate surpresa contra o Mímico Voraz, que recompensa com o Elixir dos Arcontes).";
 
         painelConteudo.add(criarSecaoGuia("1. Ciclo de Vantagens Elementais", textoElementos));
         painelConteudo.add(Box.createVerticalStrut(10));
@@ -959,6 +1081,7 @@ public class TelaJogo extends JFrame {
 
         JScrollPane scroll = new JScrollPane(painelConteudo);
         scroll.setBorder(BorderFactory.createEmptyBorder());
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
         dialogo.add(scroll, BorderLayout.CENTER);
         SwingUtilities.invokeLater(() -> scroll.getViewport().setViewPosition(new Point(0, 0)));
@@ -975,20 +1098,50 @@ public class TelaJogo extends JFrame {
         dialogo.setVisible(true);
     }
 
-    private JPanel criarSecaoGuia(String titulo, String conteudoHtml) {
+    private JPanel criarSecaoGuia(String titulo, String conteudo) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(TemaFantasia.PERGAMINHO_DESTACADO);
-        card.setBorder(BorderFactory.createCompoundBorder(
-                TemaFantasia.criarBordaMadeiraPergaminho(titulo),
-                BorderFactory.createEmptyBorder(6, 10, 8, 10)
-        ));
+        card.setBorder(TemaFantasia.criarBordaMadeiraPergaminho(titulo));
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel lblTexto = new JLabel(conteudoHtml);
-        lblTexto.setFont(TemaFantasia.FONTE_TEXTO);
-        lblTexto.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
-        card.add(lblTexto, BorderLayout.CENTER);
+        JTextArea area = new JTextArea(conteudo);
+        area.setColumns(46);
+        area.setEditable(false);
+        area.setFocusable(false);
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
+        area.setOpaque(false);
+        area.setFont(TemaFantasia.FONTE_TEXTO);
+        area.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
+        card.add(area, BorderLayout.CENTER);
         return card;
+    }
+
+    private static class PainelGuiaRolavel extends JPanel implements Scrollable {
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+
+        @Override
+        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return 16;
+        }
+
+        @Override
+        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return 64;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
+        }
     }
 
     private void exibirSobre() {
