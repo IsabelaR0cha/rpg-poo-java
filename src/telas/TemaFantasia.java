@@ -115,15 +115,23 @@ public final class TemaFantasia {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                Color corBase = getModel().isPressed()
-                        ? MADEIRA_ESCURA.darker()
-                        : (getModel().isRollover() ? corDestaque.darker() : corDestaque);
+                Color corAtual = getBackground() != null ? getBackground() : corDestaque;
+                Color corBase;
+                Color corBorda;
+                if (!isEnabled()) {
+                    corBase = new Color(58, 53, 49);
+                    corBorda = new Color(125, 116, 104);
+                } else {
+                    corBase = getModel().isPressed()
+                            ? MADEIRA_ESCURA.darker()
+                            : (getModel().isRollover() ? corAtual.darker() : corAtual);
+                    corBorda = OURO_BORDA;
+                }
 
                 g2.setColor(corBase);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 8, 8);
 
-                // Friso dourado interno
-                g2.setColor(OURO_BORDA);
+                g2.setColor(corBorda);
                 g2.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, 7, 7);
 
                 g2.dispose();
@@ -131,6 +139,7 @@ public final class TemaFantasia {
             }
         };
 
+        btn.setBackground(corDestaque);
         btn.setFont(FONTE_TEXTO_BOLD);
         btn.setForeground(TEXTO_CLARO);
         btn.setFocusPainted(false);

@@ -34,6 +34,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.text.DefaultCaret;
 import modelo.Arcanista;
 import modelo.Atirador;
 import modelo.Catalisador;
@@ -71,7 +72,8 @@ public class TelaJogo extends JFrame {
     private JLabel lblPreviaAtributos;
     private JLabel lblPreviaHabilidade;
     private JLabel lblPreviaPassiva;
-    private JLabel lblPreviaReacao;
+    private JButton btnIniciar;
+    private JButton btnCarregarCheckpoint;
 
     // ================= CONTROLES DA TELA DE BATALHA =================
     private JLabel lblAndarBanner;
@@ -92,6 +94,7 @@ public class TelaJogo extends JFrame {
 
     // Log e Ações
     private JTextArea areaLog;
+    private JButton btnLimparLog;
     private JButton btnAtacar;
     private JButton btnHabilidade;
     private JButton btnMochila;
@@ -239,11 +242,11 @@ public class TelaJogo extends JFrame {
         painelBotoes.setBackground(TemaFantasia.PERGAMINHO_MEDIO);
         painelBotoes.setBorder(BorderFactory.createMatteBorder(3, 0, 0, 0, TemaFantasia.MADEIRA_ESCURA));
 
-        JButton btnIniciar = TemaFantasia.criarBotaoMadeira("⚔️ Iniciar Aventura na Torre", new Color(180, 83, 9));
+        btnIniciar = TemaFantasia.criarBotaoMadeira("⚔️ Iniciar Aventura na Torre", new Color(180, 83, 9));
         btnIniciar.setPreferredSize(new Dimension(230, 40));
         btnIniciar.setFont(new Font("Serif", Font.BOLD, 14));
 
-        JButton btnCarregarCheckpoint = TemaFantasia.criarBotaoMadeira("📂 Carregar Checkpoint Salvo", TemaFantasia.COR_HYDRO);
+        btnCarregarCheckpoint = TemaFantasia.criarBotaoMadeira("📂 Carregar Checkpoint Salvo", TemaFantasia.COR_HYDRO);
         btnCarregarCheckpoint.setPreferredSize(new Dimension(220, 40));
 
         btnIniciar.addActionListener(e -> iniciarNovaPartida());
@@ -504,14 +507,32 @@ public class TelaJogo extends JFrame {
         areaLog.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
         areaLog.setFont(new Font("Monospaced", Font.PLAIN, 12));
         areaLog.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
+        DefaultCaret caret = (DefaultCaret) areaLog.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+        JPanel painelLog = new JPanel(new BorderLayout(0, 4));
+        painelLog.setBackground(TemaFantasia.PERGAMINHO_CLARO);
+        painelLog.setBorder(TemaFantasia.criarBordaMadeiraPergaminho("Diário de Combate da Torre"));
+
+        JPanel painelTopoLog = new JPanel(new FlowLayout(FlowLayout.RIGHT, 4, 2));
+        painelTopoLog.setOpaque(false);
+
+        btnLimparLog = TemaFantasia.criarBotaoMadeira("Limpar Log", TemaFantasia.MADEIRA_MEDIA);
+        btnLimparLog.setFont(TemaFantasia.FONTE_PEQUENA);
+        btnLimparLog.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10));
+        btnLimparLog.addActionListener(e -> limparLog());
+        painelTopoLog.add(btnLimparLog);
 
         JScrollPane scrollLog = new JScrollPane(areaLog);
-        scrollLog.setBorder(TemaFantasia.criarBordaMadeiraPergaminho("Diário de Combate da Torre"));
+        scrollLog.setBorder(BorderFactory.createLineBorder(TemaFantasia.OURO_BORDA, 1));
+
+        painelLog.add(painelTopoLog, BorderLayout.NORTH);
+        painelLog.add(scrollLog, BorderLayout.CENTER);
 
         JPanel painelMeio = new JPanel(new BorderLayout(0, 8));
         painelMeio.setOpaque(false);
         painelMeio.add(painelCombatentes, BorderLayout.NORTH);
-        painelMeio.add(scrollLog, BorderLayout.CENTER);
+        painelMeio.add(painelLog, BorderLayout.CENTER);
 
         painelCentro.add(painelMeio, BorderLayout.CENTER);
         painel.add(painelCentro, BorderLayout.CENTER);
@@ -533,7 +554,7 @@ public class TelaJogo extends JFrame {
         btnMochila.addActionListener(e -> abrirMochila());
         btnSalvar.addActionListener(e -> salvarProgresso());
         btnCarregar.addActionListener(e -> carregarJogoSalvo());
-        btnReiniciar.addActionListener(e -> exibirTela(TELA_SELECAO));
+        btnReiniciar.addActionListener(e -> solicitarNovoJogo());
 
         painelAcoes.add(btnAtacar);
         painelAcoes.add(btnHabilidade);
@@ -561,10 +582,59 @@ public class TelaJogo extends JFrame {
     // =========================================================================
     // LÓGICA DE AÇÕES E EVENTOS
     // =========================================================================
+    private boolean confirmarAbandonoPartidaAtiva(String acao) {
+        if (jogo == null || jogo.isJogoFinalizado()) {
+            return true;
+        }
+        int opcao = JOptionPane.showConfirmDialog(
+                this,
+                "Há uma partida em andamento no Andar " + jogo.getNumeroAndarAtual()
+                        + ".\nDeseja realmente " + acao + "? O progresso não salvo será perdido.",
+                "Partida em Andamento",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+        return opcao == JOptionPane.YES_OPTION;
+    }
+
+    private void solicitarNovoJogo() {
+        if (confirmarAbandonoPartidaAtiva("iniciar um novo jogo")) {
+            exibirTela(TELA_SELECAO);
+            campoNome.requestFocusInWindow();
+        }
+    }
+
+    private void limparLog() {
+        if (!areaLog.getText().isEmpty()) {
+            areaLog.setText("");
+            areaLog.setCaretPosition(0);
+        }
+    }
+
     private void iniciarNovaPartida() {
         String nome = campoNome.getText().trim();
         if (nome.isEmpty()) {
-            nome = "Viajante";
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Informe um nome para o seu herói antes de iniciar a aventura.",
+                    "Nome Obrigatório",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            campoNome.requestFocusInWindow();
+            return;
+        }
+        if (nome.contains(";")) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "O nome do herói não pode conter o caractere ';'.",
+                    "Nome Inválido",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            campoNome.requestFocusInWindow();
+            return;
+        }
+        if (!confirmarAbandonoPartidaAtiva("iniciar uma nova partida")) {
+            return;
         }
 
         Heroi heroi = instanciarHeroi(classeSelecionada, nome, elementoSelecionado);
@@ -619,13 +689,13 @@ public class TelaJogo extends JFrame {
     }
 
     private void abrirMochila() {
-        if (jogo == null) {
-            JOptionPane.showMessageDialog(this, "Inicie uma jornada para acessar a mochila.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        if (jogo == null || jogo.isJogoFinalizado()) {
+            JOptionPane.showMessageDialog(this, "Não há batalha ativa para acessar a mochila.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        DialogInventario dlg = new DialogInventario(this, jogo, () -> {
-            atualizarInterfaceBatalha();
+        DialogInventario dlg = new DialogInventario(this, jogo, log -> {
+            adicionarLog(log);
             verificarRecompensaEAtualizar();
         });
         dlg.setVisible(true);
@@ -634,11 +704,26 @@ public class TelaJogo extends JFrame {
     private void verificarRecompensaEAtualizar() {
         atualizarInterfaceBatalha();
 
-        // Se após a ação houve vitória de andar com recompensa, abre o modal estilizado!
+        if (jogo != null && jogo.isJogoFinalizado()) {
+            jogo.limparEventoRecompensa();
+            DialogFimDeJogo dlgFim = new DialogFimDeJogo(
+                    this,
+                    jogo.isVitoriaFinal(),
+                    jogo.getHeroi(),
+                    jogo.getNumeroAndarAtual(),
+                    persistencia.existeSave(),
+                    () -> carregarJogoSalvo(),
+                    () -> solicitarNovoJogo()
+            );
+            dlgFim.setVisible(true);
+            return;
+        }
+
         if (jogo != null && jogo.isHouveEventoRecompensa()) {
             DialogRecompensaBau dlgRecompensa = new DialogRecompensaBau(
                     this,
                     jogo.getHeroi().getNivel(),
+                    jogo.isSubiuNivelNoTurno(),
                     jogo.getUltimoEventoNome(),
                     jogo.getUltimoEventoDescricao(),
                     jogo.getUltimoItemRecebido()
@@ -647,24 +732,10 @@ public class TelaJogo extends JFrame {
             jogo.limparEventoRecompensa();
             atualizarInterfaceBatalha();
         }
-
-        // Se o jogo encerrou (derrota ou vitória final), abre o modal de fim de jogo com opções
-        if (jogo != null && jogo.isJogoFinalizado()) {
-            DialogFimDeJogo dlgFim = new DialogFimDeJogo(
-                    this,
-                    jogo.isVitoriaFinal(),
-                    jogo.getHeroi(),
-                    jogo.getNumeroAndarAtual(),
-                    persistencia.existeSave(),
-                    () -> carregarJogoSalvo(),
-                    () -> exibirTela(TELA_SELECAO)
-            );
-            dlgFim.setVisible(true);
-        }
     }
 
     private void salvarProgresso() {
-        if (jogo == null) {
+        if (jogo == null || jogo.isJogoFinalizado()) {
             return;
         }
         try {
@@ -775,7 +846,7 @@ public class TelaJogo extends JFrame {
 
         JMenuItem itemNovo = new JMenuItem("Novo Jogo");
         itemNovo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
-        itemNovo.addActionListener(e -> exibirTela(TELA_SELECAO));
+        itemNovo.addActionListener(e -> solicitarNovoJogo());
 
         menuItemSalvar = new JMenuItem("Salvar Jogo");
         menuItemSalvar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
