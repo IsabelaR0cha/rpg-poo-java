@@ -11,20 +11,28 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import modelo.Arcanista;
 import modelo.Atirador;
@@ -90,6 +98,7 @@ public class TelaJogo extends JFrame {
     private JButton btnSalvar;
     private JButton btnCarregar;
     private JButton btnReiniciar;
+    private JMenuItem menuItemSalvar;
 
     public TelaJogo() {
         super("Torre dos Elementos — Diário de Aventuras RPG");
@@ -111,6 +120,8 @@ public class TelaJogo extends JFrame {
     }
 
     private void inicializarComponentes() {
+        setJMenuBar(criarBarraMenu());
+
         // ================= BARRA SUPERIOR: ABAS DE MARCADOR DE LIVRO =================
         JPanel painelAbasSuperiores = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
         painelAbasSuperiores.setBackground(TemaFantasia.MADEIRA_ESCURA);
@@ -748,6 +759,173 @@ public class TelaJogo extends JFrame {
         btnSalvar.setEnabled(partidaAtiva);
         btnCarregar.setEnabled(true);
         btnReiniciar.setEnabled(true);
+        if (menuItemSalvar != null) {
+            menuItemSalvar.setEnabled(partidaAtiva);
+        }
+    }
+
+    private JMenuBar criarBarraMenu() {
+        JMenuBar barraMenu = new JMenuBar();
+        barraMenu.setBackground(TemaFantasia.PERGAMINHO_MEDIO);
+        barraMenu.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, TemaFantasia.MADEIRA_ESCURA));
+
+        JMenu menuJogo = new JMenu("Jogo");
+        menuJogo.setFont(TemaFantasia.FONTE_TEXTO_BOLD);
+        menuJogo.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
+
+        JMenuItem itemNovo = new JMenuItem("Novo Jogo");
+        itemNovo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
+        itemNovo.addActionListener(e -> exibirTela(TELA_SELECAO));
+
+        menuItemSalvar = new JMenuItem("Salvar Jogo");
+        menuItemSalvar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        menuItemSalvar.setEnabled(false);
+        menuItemSalvar.addActionListener(e -> salvarProgresso());
+
+        JMenuItem itemCarregar = new JMenuItem("Carregar Jogo");
+        itemCarregar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+        itemCarregar.addActionListener(e -> carregarJogoSalvo());
+
+        JMenuItem itemSair = new JMenuItem("Sair");
+        itemSair.addActionListener(e -> {
+            int opcao = JOptionPane.showConfirmDialog(
+                    this,
+                    "Deseja realmente sair de Torre dos Elementos?",
+                    "Confirmar Saída",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+            );
+            if (opcao == JOptionPane.YES_OPTION) {
+                dispose();
+                System.exit(0);
+            }
+        });
+
+        menuJogo.add(itemNovo);
+        menuJogo.add(menuItemSalvar);
+        menuJogo.add(itemCarregar);
+        menuJogo.addSeparator();
+        menuJogo.add(itemSair);
+
+        JMenu menuAjuda = new JMenu("Ajuda");
+        menuAjuda.setFont(TemaFantasia.FONTE_TEXTO_BOLD);
+        menuAjuda.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
+
+        JMenuItem itemGuia = new JMenuItem("Guia da Torre e Elementos");
+        itemGuia.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+        itemGuia.addActionListener(e -> exibirGuiaDoJogo());
+
+        JMenuItem itemSobre = new JMenuItem("Sobre");
+        itemSobre.addActionListener(e -> exibirSobre());
+
+        menuAjuda.add(itemGuia);
+        menuAjuda.add(itemSobre);
+
+        barraMenu.add(menuJogo);
+        barraMenu.add(menuAjuda);
+        return barraMenu;
+    }
+
+    private void exibirGuiaDoJogo() {
+        JDialog dialogo = new JDialog(this, "Guia da Torre e Elementos", true);
+        dialogo.setSize(640, 540);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setResizable(false);
+        dialogo.getContentPane().setBackground(TemaFantasia.PERGAMINHO_CLARO);
+        dialogo.setLayout(new BorderLayout(10, 10));
+
+        JPanel painelTopo = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 10));
+        painelTopo.setBackground(TemaFantasia.PERGAMINHO_MEDIO);
+        painelTopo.setBorder(BorderFactory.createMatteBorder(0, 0, 3, 0, TemaFantasia.MADEIRA_ESCURA));
+
+        JLabel lblTitulo = new JLabel("Guia da Torre e Elementos", JLabel.CENTER);
+        lblTitulo.setFont(TemaFantasia.FONTE_TITULO);
+        lblTitulo.setForeground(TemaFantasia.MADEIRA_ESCURA);
+        painelTopo.add(lblTitulo);
+        dialogo.add(painelTopo, BorderLayout.NORTH);
+
+        JPanel painelConteudo = new JPanel();
+        painelConteudo.setLayout(new BoxLayout(painelConteudo, BoxLayout.Y_AXIS));
+        painelConteudo.setBackground(TemaFantasia.PERGAMINHO_CLARO);
+        painelConteudo.setBorder(BorderFactory.createEmptyBorder(10, 14, 10, 14));
+
+        String textoElementos = "<html><div style='width:500px;'>"
+                + "<b>Ciclo principal:</b> Pyro &rarr; Anemo &rarr; Electro &rarr; Hydro &rarr; Pyro<br><br>"
+                + "<b>Pyro:</b> x1.5 contra Anemo (Propagação) | x1.4 contra Electro (Sobrecarga) | x0.8 contra Hydro.<br>"
+                + "<b>Anemo:</b> x1.35 contra qualquer outro elemento (Dispersão Elemental).<br>"
+                + "<b>Electro:</b> x1.6 contra Hydro (Eletrocussão) | x1.3 contra Pyro (Sobrecarga).<br>"
+                + "<b>Hydro:</b> x1.6 contra Pyro (Vaporização) | x1.3 contra Electro (Condução Elétrica).<br>"
+                + "<b>Mesmo elemento:</b> x0.65 (Resistência Elemental: -35% de dano)."
+                + "</div></html>";
+
+        String textoClasses = "<html><div style='width:500px;'>"
+                + "<b>Espadachim</b> (HP 115 | Mana 40 | ATQ 22 | DEF 10)<br>"
+                + "&bull; Habilidade: <i>Lâmina Elemental</i> (15 Mana) | Passiva: 16% de chance de esquiva.<br><br>"
+                + "<b>Arcanista</b> (HP 90 | Mana 75 | ATQ 25 | DEF 5)<br>"
+                + "&bull; Habilidade: <i>Explosão Arcana</i> (20 Mana) | Passiva: +15% de dano em reações da habilidade.<br><br>"
+                + "<b>Atirador</b> (HP 95 | Mana 55 | ATQ 24 | DEF 7)<br>"
+                + "&bull; Habilidade: <i>Disparo Perfurante</i> (14 Mana) | Passiva: 28% de chance de acerto crítico (150%).<br><br>"
+                + "<b>Catalisador</b> (HP 85 | Mana 80 | ATQ 23 | DEF 5)<br>"
+                + "&bull; Habilidade: <i>Ressonância Suprema</i> (22 Mana) | Passiva: ataques normais também aplicam reação elemental."
+                + "</div></html>";
+
+        String textoTorre = "<html><div style='width:500px;'>"
+                + "<b>Andar 1:</b> Slime Gigante Pyro (PYRO) — pode causar queimadura por 2 turnos.<br>"
+                + "<b>Andar 2:</b> Espectro das Marés (HYDRO) — pode regenerar HP com o Manto das Marés.<br>"
+                + "<b>Andar 3:</b> Guardião dos Ventos (ANEMO) — 18% de esquiva e golpe Ciclone Cortante.<br>"
+                + "<b>Andar 4:</b> Arconte da Tempestade (ELECTRO) — chefe final que drena 10 de mana no Raio Cataclísmico.<br><br>"
+                + "<b>Eventos entre os andares:</b> Ao vencer um guardião, seu herói sobe de nível e pode encontrar um "
+                + "<b>Baú de Tesouro</b> (novas poções e elixires), uma <b>Fonte Mística</b> (+50 HP e +35 Mana), "
+                + "o <b>Altar dos Titãs</b> (+5 ATQ e +2 DEF permanentes) ou cair na emboscada de um "
+                + "<b>Baú Mímico</b> (combate surpresa contra o Mímico Voraz, que recompensa com o Elixir dos Arcontes)."
+                + "</div></html>";
+
+        painelConteudo.add(criarSecaoGuia("1. Ciclo de Vantagens Elementais", textoElementos));
+        painelConteudo.add(Box.createVerticalStrut(10));
+        painelConteudo.add(criarSecaoGuia("2. As 4 Classes de Heróis", textoClasses));
+        painelConteudo.add(Box.createVerticalStrut(10));
+        painelConteudo.add(criarSecaoGuia("3. Os 4 Andares, Baús e Mímicos", textoTorre));
+
+        JScrollPane scroll = new JScrollPane(painelConteudo);
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        scroll.getVerticalScrollBar().setUnitIncrement(16);
+        dialogo.add(scroll, BorderLayout.CENTER);
+        SwingUtilities.invokeLater(() -> scroll.getViewport().setViewPosition(new Point(0, 0)));
+
+        JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        painelRodape.setBackground(TemaFantasia.PERGAMINHO_MEDIO);
+        painelRodape.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, TemaFantasia.MADEIRA_ESCURA));
+
+        JButton btnFechar = TemaFantasia.criarBotaoMadeira("Fechar", TemaFantasia.MADEIRA_MEDIA);
+        btnFechar.addActionListener(e -> dialogo.dispose());
+        painelRodape.add(btnFechar);
+        dialogo.add(painelRodape, BorderLayout.SOUTH);
+
+        dialogo.setVisible(true);
+    }
+
+    private JPanel criarSecaoGuia(String titulo, String conteudoHtml) {
+        JPanel card = new JPanel(new BorderLayout());
+        card.setBackground(TemaFantasia.PERGAMINHO_DESTACADO);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                TemaFantasia.criarBordaMadeiraPergaminho(titulo),
+                BorderFactory.createEmptyBorder(6, 10, 8, 10)
+        ));
+        card.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel lblTexto = new JLabel(conteudoHtml);
+        lblTexto.setFont(TemaFantasia.FONTE_TEXTO);
+        lblTexto.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
+        card.add(lblTexto, BorderLayout.CENTER);
+        return card;
+    }
+
+    private void exibirSobre() {
+        String mensagem = "Torre dos Elementos - Projeto Final de POO - UFU\n\n"
+                + "Disciplina: Programação Orientada a Objetos (Sistemas de Informação)\n"
+                + "Grupo: Celina, Isabela Dantas e Isabela Rocha\n\n"
+                + "Implementado em Java com interface gráfica em Java Swing (javax.swing).";
+        JOptionPane.showMessageDialog(this, mensagem, "Sobre", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void adicionarLog(String texto) {
