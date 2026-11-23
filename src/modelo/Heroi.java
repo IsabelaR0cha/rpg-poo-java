@@ -8,6 +8,11 @@ import itens.Item;
 import itens.TipoItem;
 
 public abstract class Heroi extends Entidade {
+    public static final int GANHO_HP_NIVEL = 15;
+    public static final int GANHO_MANA_NIVEL = 8;
+    public static final int GANHO_ATAQUE_NIVEL = 4;
+    public static final int GANHO_DEFESA_NIVEL = 2;
+
     protected int manaAtual;
     protected int manaMax;
     protected int nivel;
@@ -71,7 +76,6 @@ public abstract class Heroi extends Entidade {
     }
 
     public String processarEfeitosInicioTurno() {
-        // Mantido por compatibilidade
         return "";
     }
 
@@ -112,6 +116,13 @@ public abstract class Heroi extends Entidade {
     public abstract String getDescricaoHabilidade();
     public abstract String getDescricaoPassiva();
 
+    public static String getDescricaoBonusNivel() {
+        return "Bônus de Atributos: +" + GANHO_HP_NIVEL + " HP Máximo | +"
+                + GANHO_MANA_NIVEL + " Mana Máxima | +"
+                + GANHO_ATAQUE_NIVEL + " Ataque | +"
+                + GANHO_DEFESA_NIVEL + " Defesa";
+    }
+
     public boolean gastarMana(int custo) {
         if (this.manaAtual >= custo) {
             this.manaAtual -= custo;
@@ -125,7 +136,6 @@ public abstract class Heroi extends Entidade {
         if (this.hpAtual > this.hpMax) {
             this.hpAtual = this.hpMax;
         }
-        // Poções de cura limpam queimaduras
         this.turnosQueimando = 0;
     }
 
@@ -138,10 +148,10 @@ public abstract class Heroi extends Entidade {
 
     public void subirNivel() {
         this.nivel++;
-        this.hpMax += 15;
-        this.manaMax += 8;
-        this.ataque += 4;
-        this.defesa += 2;
+        this.hpMax += GANHO_HP_NIVEL;
+        this.manaMax += GANHO_MANA_NIVEL;
+        this.ataque += GANHO_ATAQUE_NIVEL;
+        this.defesa += GANHO_DEFESA_NIVEL;
 
         this.hpAtual = Math.min(this.hpMax, this.hpAtual + 35);
         this.manaAtual = Math.min(this.manaMax, this.manaAtual + 25);

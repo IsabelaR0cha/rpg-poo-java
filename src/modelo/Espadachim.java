@@ -4,6 +4,16 @@ import combate.Combativel;
 import excecoes.ManaInsuficienteException;
 
 public class Espadachim extends Heroi {
+    public static final int HP_BASE = 115;
+    public static final int MANA_BASE = 40;
+    public static final int ATAQUE_BASE = 22;
+    public static final int DEFESA_BASE = 10;
+    public static final int CUSTO_MANA = 15;
+
+    public Espadachim(String nome, Elemento elemento) {
+        super(nome, HP_BASE, ATAQUE_BASE, DEFESA_BASE, MANA_BASE, elemento);
+    }
+
     public Espadachim(String nome, int hpMax, int ataque, int defesa, int manaMax, Elemento elemento) {
         super(nome, hpMax, ataque, defesa, manaMax, elemento);
     }

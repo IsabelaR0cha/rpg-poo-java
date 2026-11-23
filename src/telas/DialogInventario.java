@@ -15,7 +15,6 @@ import java.awt.GridLayout;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -32,7 +31,7 @@ import javax.swing.ListSelectionModel;
 
 public class DialogInventario extends JDialog {
     private final Jogo jogo;
-    private final Consumer<String> callbackComLog;
+    private final Runnable callbackAposUso;
 
     private DefaultListModel<ItemAgrupado> modelLista;
     private JList<ItemAgrupado> listaItens;
@@ -66,17 +65,9 @@ public class DialogInventario extends JDialog {
     }
 
     public DialogInventario(Frame parent, Jogo jogo, Runnable callbackAposUso) {
-        this(parent, jogo, log -> {
-            if (callbackAposUso != null) {
-                callbackAposUso.run();
-            }
-        });
-    }
-
-    public DialogInventario(Frame parent, Jogo jogo, Consumer<String> callbackComLog) {
         super(parent, "Mochila de Itens do Viajante — Torre dos Elementos", true);
         this.jogo = jogo;
-        this.callbackComLog = callbackComLog;
+        this.callbackAposUso = callbackAposUso;
 
         configurarDialogo();
         inicializarComponentes();
@@ -229,15 +220,15 @@ public class DialogInventario extends JDialog {
         }
 
         try {
-            String logTurno = jogo.usarItemNoTurno(selecionado.getItem().getNome());
-            boolean encerrou = jogo.isJogoFinalizado();
-            if (encerrou) {
+            jogo.usarItemNoTurno(selecionado.getItem().getNome());
+            if (jogo.isJogoFinalizado()) {
+                // Se a ação encerrou a partida (ex: queimadura matou herói ou contra-ataque), fecha o inventário primeiro
                 dispose();
             }
-            if (callbackComLog != null) {
-                callbackComLog.accept(logTurno);
+            if (callbackAposUso != null) {
+                callbackAposUso.run();
             }
-            if (!encerrou) {
+            if (!jogo.isJogoFinalizado()) {
                 carregarItens();
             }
         } catch (ItemNaoEncontradoException ex) {

@@ -4,6 +4,16 @@ import combate.Combativel;
 import excecoes.ManaInsuficienteException;
 
 public class Arcanista extends Heroi {
+    public static final int HP_BASE = 90;
+    public static final int MANA_BASE = 75;
+    public static final int ATAQUE_BASE = 25;
+    public static final int DEFESA_BASE = 5;
+    public static final int CUSTO_MANA = 20;
+
+    public Arcanista(String nome, Elemento elemento) {
+        super(nome, HP_BASE, ATAQUE_BASE, DEFESA_BASE, MANA_BASE, elemento);
+    }
+
     public Arcanista(String nome, int hpMax, int ataque, int defesa, int manaMax, Elemento elemento) {
         super(nome, hpMax, ataque, defesa, manaMax, elemento);
     }

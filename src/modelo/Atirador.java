@@ -4,6 +4,16 @@ import combate.Combativel;
 import excecoes.ManaInsuficienteException;
 
 public class Atirador extends Heroi {
+    public static final int HP_BASE = 95;
+    public static final int MANA_BASE = 55;
+    public static final int ATAQUE_BASE = 24;
+    public static final int DEFESA_BASE = 7;
+    public static final int CUSTO_MANA = 14;
+
+    public Atirador(String nome, Elemento elemento) {
+        super(nome, HP_BASE, ATAQUE_BASE, DEFESA_BASE, MANA_BASE, elemento);
+    }
+
     public Atirador(String nome, int hpMax, int ataque, int defesa, int manaMax, Elemento elemento) {
         super(nome, hpMax, ataque, defesa, manaMax, elemento);
     }

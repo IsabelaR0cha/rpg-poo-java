@@ -4,6 +4,16 @@ import combate.Combativel;
 import excecoes.ManaInsuficienteException;
 
 public class Catalisador extends Heroi {
+    public static final int HP_BASE = 85;
+    public static final int MANA_BASE = 80;
+    public static final int ATAQUE_BASE = 23;
+    public static final int DEFESA_BASE = 5;
+    public static final int CUSTO_MANA = 22;
+
+    public Catalisador(String nome, Elemento elemento) {
+        super(nome, HP_BASE, ATAQUE_BASE, DEFESA_BASE, MANA_BASE, elemento);
+    }
+
     public Catalisador(String nome, int hpMax, int ataque, int defesa, int manaMax, Elemento elemento) {
         super(nome, hpMax, ataque, defesa, manaMax, elemento);
     }
