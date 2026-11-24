@@ -131,7 +131,7 @@ public class TesteIntegracao {
         afirme(Elemento.ANEMO.getMultiplicadorContra(Elemento.HYDRO) == 1.35, "Anemo x Hydro = 1.35 (Dispersão)");
         afirme(Elemento.ANEMO.getMultiplicadorContra(Elemento.ELECTRO) == 1.35, "Anemo x Electro = 1.35 (Dispersão)");
 
-        afirme(Elemento.ELECTRO.getMultiplicadorContra(Elemento.HYDRO) == 1.6, "Electro x Hydro = 1.6 (Eletrocussão)");
+        afirme(Elemento.ELECTRO.getMultiplicadorContra(Elemento.HYDRO) == 1.8, "Electro x Hydro = 1.8 (Eletrocussão)");
         afirme(Elemento.ELECTRO.getMultiplicadorContra(Elemento.PYRO) == 1.3, "Electro x Pyro = 1.3 (Sobrecarga)");
 
         afirme(Elemento.HYDRO.getMultiplicadorContra(Elemento.PYRO) == 1.6, "Hydro x Pyro = 1.6 (Vaporização)");

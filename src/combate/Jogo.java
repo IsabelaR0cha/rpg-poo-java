@@ -39,11 +39,11 @@ public class Jogo {
     }
 
     private void inicializarAndares() {
-        // 4 andares temáticos da Torre dos Elementos (Spiral Abyss theme)
-        this.guardioesAndares.add(new Monstro("Slime Gigante Pyro", 85, 19, 6, 1, Elemento.PYRO));
-        this.guardioesAndares.add(new Monstro("Espectro das Marés", 120, 26, 8, 2, Elemento.HYDRO));
-        this.guardioesAndares.add(new Monstro("Guardião dos Ventos", 155, 33, 10, 3, Elemento.ANEMO));
-        this.guardioesAndares.add(new Monstro("Arconte da Tempestade", 215, 42, 14, 4, Elemento.ELECTRO));
+        // 4 andares temáticos da Torre dos Elementos com dificuldade calibrada e fluida
+        this.guardioesAndares.add(new Monstro("Slime Gigante Pyro", 75, 17, 5, 1, Elemento.PYRO));
+        this.guardioesAndares.add(new Monstro("Espectro das Marés", 105, 22, 6, 2, Elemento.HYDRO));
+        this.guardioesAndares.add(new Monstro("Guardião dos Ventos", 135, 27, 8, 3, Elemento.ANEMO));
+        this.guardioesAndares.add(new Monstro("Arconte da Tempestade", 185, 33, 11, 4, Elemento.ELECTRO));
     }
 
     public void iniciarBatalhaDoAndar() {
@@ -159,10 +159,10 @@ public class Jogo {
             // Sorteio de Evento Aleatório entre os andares
             int sorteioEvento = random.nextInt(100);
 
-            if (sorteioEvento < 30) {
-                // Evento 1: Baú Mímico (Armadilha de combate surpresa!)
+            if (sorteioEvento < 18) {
+                // Evento 1: Baú Mímico (Armadilha de combate surpresa - probabilidade equilibrada em 18%)
                 Elemento elementoMimico = (this.heroi.getElemento() == Elemento.PYRO) ? Elemento.HYDRO : Elemento.PYRO;
-                Monstro mimico = new Monstro("Mímico Voraz", 80 + (this.andarAtual * 20), 22 + (this.andarAtual * 5), 7, this.andarAtual + 1, elementoMimico, true);
+                Monstro mimico = new Monstro("Mímico Voraz", 75 + (this.andarAtual * 18), 20 + (this.andarAtual * 4), 6, this.andarAtual + 1, elementoMimico, true);
                 this.batalhaAtual = new Batalha(this.heroi, mimico);
 
                 this.houveEventoRecompensa = true;
@@ -173,7 +173,7 @@ public class Jogo {
                         + "\n⚠️ [EVENTO SURPRESA: BAÚ MÍMICO!]"
                         + "\nAo abrir o baú dourado das ruínas, dentes e garras afiadas saltam de dentro!"
                         + "\nUm MÍMICO VORAZ [" + elementoMimico + "] atacou em emboscada! Defenda-se!";
-            } else if (sorteioEvento < 55) {
+            } else if (sorteioEvento < 45) {
                 // Evento 2: Fonte Mística Sagrada
                 this.heroi.curar(50);
                 this.heroi.recuperarMana(35);
@@ -189,7 +189,7 @@ public class Jogo {
                         + "\nVocê encontrou uma fonte de águas sagradas entre as pedras antigas."
                         + "\nVocê bebeu e recuperou +50 de HP e +35 de Mana!"
                         + "\nAvançando revitalizado para o Andar " + (this.andarAtual + 1) + "...";
-            } else if (sorteioEvento < 75) {
+            } else if (sorteioEvento < 70) {
                 // Evento 3: Altar dos Titãs (Aumento de status permanente)
                 this.heroi.aumentarAtaque(5);
                 this.heroi.aumentarDefesa(2);
@@ -205,7 +205,7 @@ public class Jogo {
                         + "\nVocê tocou a relíquia no altar central e absorveu essência pura: +5 de Ataque e +2 de Defesa permanentes!"
                         + "\nAvançando para o Andar " + (this.andarAtual + 1) + "...";
             } else {
-                // Evento 4: Baú de Tesouro com Item Poderoso
+                // Evento 4: Baú de Tesouro com Item Poderoso (30% de chance)
                 Item recompensaBau = abrirBauDoAndar(this.andarAtual + 1);
                 this.heroi.getInventario().adicionarItem(recompensaBau);
                 this.andarAtual++;

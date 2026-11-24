@@ -81,11 +81,11 @@ public class Monstro extends Entidade {
             int danoReal = hpAntes - heroi.getHpAtual();
             return "🔥 [HABILIDADE ESPECIAL] " + this.nome + " expeliu um Lança-Chamas Ardente causando "
                     + danoReal + " de dano e incendiando " + heroi.getNome() + " por 2 turnos!";
-        } else if (this.elemento == Elemento.HYDRO && this.hpAtual < (this.hpMax * 0.55) && sorteioAcao < 45) {
-            // Espectro Hydro: Manto das Marés (Cura + Dano)
-            int cura = 25;
+        } else if (this.elemento == Elemento.HYDRO && this.hpAtual < (this.hpMax * 0.40) && sorteioAcao < 35) {
+            // Espectro Hydro: Manto das Marés (Cura suave + Dano reduzido)
+            int cura = 16;
             this.hpAtual = Math.min(this.hpMax, this.hpAtual + cura);
-            int dano = (int) (this.ataque * 0.9);
+            int dano = (int) (this.ataque * 0.85);
             heroi.receberDano(dano);
             int danoReal = hpAntes - heroi.getHpAtual();
             return "💧 [HABILIDADE ESPECIAL] " + this.nome + " conjurou o Manto das Marés! Regenerou +"
@@ -97,14 +97,14 @@ public class Monstro extends Entidade {
             int danoReal = hpAntes - heroi.getHpAtual();
             return "🌪️ [HABILIDADE ESPECIAL] " + this.nome + " invocou um Ciclone Cortante causando "
                     + danoReal + " de dano perfurante em " + heroi.getNome() + "!";
-        } else if (this.elemento == Elemento.ELECTRO && (turno % 3 == 0 || sorteioAcao < 35)) {
+        } else if (this.elemento == Elemento.ELECTRO && (turno % 4 == 0 || sorteioAcao < 25)) {
             // Arconte Electro: Raio Cataclísmico
-            int dano = (int) (this.ataque * 1.45);
+            int dano = (int) (this.ataque * 1.35);
             heroi.receberDano(dano);
-            heroi.gastarMana(10);
+            heroi.gastarMana(8);
             int danoReal = hpAntes - heroi.getHpAtual();
             return "⚡ [GOLPE SUPREMO] " + this.nome + " descarregou o Raio Cataclísmico causando brutais "
-                    + danoReal + " de dano e queimando 10 de mana de " + heroi.getNome() + "!";
+                    + danoReal + " de dano e queimando 8 de mana de " + heroi.getNome() + "!";
         }
 
         // Ataque básico com chance de acerto crítico

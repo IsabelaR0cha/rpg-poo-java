@@ -62,7 +62,7 @@ public class DialogRecompensaBau extends JDialog {
         lblNivel.setFont(new Font("Serif", Font.BOLD, 15));
         lblNivel.setForeground(new Color(180, 83, 9));
 
-        JLabel lblBonus = new JLabel("<html>Bônus de Atributos: <b>" + modelo.Heroi.getDescricaoBonusNivel() + "</b><br>"
+        JLabel lblBonus = new JLabel("<html><b>" + modelo.Heroi.getDescricaoBonusNivel() + "</b><br>"
                 + "<small style='color:#5C3A21;'>Vitalidade e energia foram parcialmente restauradas com a vitória!</small></html>");
         lblBonus.setFont(TemaFantasia.FONTE_TEXTO);
         lblBonus.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
@@ -107,7 +107,7 @@ public class DialogRecompensaBau extends JDialog {
             lblItemBadge.setFont(TemaFantasia.FONTE_TEXTO_BOLD);
             lblItemBadge.setForeground(itemRecebido.getTipo() == TipoItem.CURA ? TemaFantasia.COR_ANEMO : TemaFantasia.COR_HYDRO);
 
-            JLabel lblItemNome = new JLabel("<b>" + itemRecebido.getNome() + "</b>");
+            JLabel lblItemNome = new JLabel("<html><b>" + itemRecebido.getNome() + "</b></html>");
             lblItemNome.setFont(TemaFantasia.FONTE_TEXTO);
             lblItemNome.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
 

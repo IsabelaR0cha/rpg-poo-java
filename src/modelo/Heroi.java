@@ -153,8 +153,9 @@ public abstract class Heroi extends Entidade {
         this.ataque += GANHO_ATAQUE_NIVEL;
         this.defesa += GANHO_DEFESA_NIVEL;
 
-        this.hpAtual = Math.min(this.hpMax, this.hpAtual + 35);
-        this.manaAtual = Math.min(this.manaMax, this.manaAtual + 25);
+        // Ao vencer um andar e subir de nível, recupera uma porção revitalizante de vitalidade e energia
+        this.hpAtual = Math.min(this.hpMax, this.hpAtual + 55);
+        this.manaAtual = Math.min(this.manaMax, this.manaAtual + 35);
         this.turnosQueimando = 0;
     }
 

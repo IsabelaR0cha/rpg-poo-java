@@ -55,7 +55,7 @@ public abstract class Entidade implements Combativel {
 
     @Override
     public void receberDano(int dano) {
-        int reducao = this.defesa / 2;
+        int reducao = (int) (this.defesa * 0.60);
         int danoReal = Math.max(2, dano - reducao);
 
         this.hpAtual -= danoReal;

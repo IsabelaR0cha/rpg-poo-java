@@ -22,7 +22,7 @@ public enum Elemento {
                 if (defensor == ELECTRO) return 1.4; // Sobrecarga
                 break;
             case ELECTRO:
-                if (defensor == HYDRO) return 1.6; // Eletrocussão
+                if (defensor == HYDRO) return 1.8; // Eletrocussão devastadora (como no Genshin Impact!)
                 if (defensor == PYRO) return 1.3;
                 break;
             case ANEMO:
@@ -50,7 +50,7 @@ public enum Elemento {
                 if (defensor == ELECTRO) return " [SOBRECARGA EXPLOSIVA! Dano x1.4]";
                 break;
             case ELECTRO:
-                if (defensor == HYDRO) return " [ELETROCUSSÃO INTENSA! Dano x1.6]";
+                if (defensor == HYDRO) return " [ELETROCUSSÃO DEVASTADORA! Dano x1.8]";
                 if (defensor == PYRO) return " [SOBRECARGA! Dano x1.3]";
                 break;
             case ANEMO:

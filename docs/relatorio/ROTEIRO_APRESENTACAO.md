@@ -33,12 +33,13 @@
 
 ## 2. Preparação antes da apresentação (checklist)
 
-- [ ] Compilar e testar o jogo na máquina que será usada na defesa (`javac -encoding UTF-8 -d bin $(find src testes -name "*.java")` e `java -cp bin telas.TelaJogo`).
+- [ ] Compilar e testar o jogo na máquina que será usada na defesa (`javac -encoding UTF-8 -d bin $(find src -name "*.java")` e `java -cp bin telas.TelaJogo`).
 - [ ] Rodar `TesteIntegracao` antes e deixar a saída com as 53 asserções aprovadas num terminal já aberto (ou em print no slide 14).
 - [ ] Deixar um arquivo `save_jogo.txt` de reserva pronto, para o caso de o salvamento ao vivo falhar.
-- [ ] Ter abertos, em janelas separadas: slides, jogo, IDE no arquivo `Combativel.java` e `docs/uml/DiagramaUML.pdf`.
+- [ ] Ter abertos, em janelas separadas: slides, jogo, IDE no arquivo `Combativel.java` e `DiagramaUML.pdf`.
 - [ ] Ensaiar a demo pelo menos duas vezes. O jogo tem aleatoriedade (crítico, esquiva, eventos entre andares), então a sequência exata pode variar.
 - [ ] Combinar quem opera o mouse na demo (Celina) e quem narra o código (Dantas) caso a banca peça para abrir o fonte.
+- [ ] Ter a tabela de reações elementais alinhada com a implementação exata de `Elemento.java`.
 
 ---
 
@@ -84,7 +85,7 @@
 
 **Slide 8 — Reações elementais (11:00 – 13:00)**
 
-> "O coração do domínio é o enum `Elemento`, que encapsula a regra no método `getMultiplicadorContra`. O ciclo elemental prioriza Pyro contra Anemo com 1.5, Anemo contra qualquer outro diferente com 1.35 de Dispersão, Electro contra Hydro com 1.6 de Eletrocussão e Hydro contra Pyro com 1.6 de Vaporização. Interações de desvantagem ou secundárias também possuem multiplicadores dedicados: Pyro contra Hydro reduz a 0.8 porque as chamas são apagadas, e Hydro contra Electro causa 1.3 de Condução Elétrica. Elementos iguais sofrem resistência, com multiplicador 0.65. Além disso, os monstros Pyro têm 35% de chance de causar **Queimadura**, um efeito contínuo de dois turnos que é processado no fim de cada turno válido. Colocar essa regra num enum evita `if` espalhados pelo código e deixa a tabela num único lugar, fácil de testar."
+> "O coração do domínio é o enum `Elemento`, que encapsula a regra no método `getMultiplicadorContra`. O ciclo elemental prioriza Pyro -> Anemo -> Electro -> Hydro -> Pyro, mas todas as interações diretas possuem multiplicadores dedicados: Pyro contra Anemo é 1.5 (Propagação); Pyro contra Electro é 1.4 (Sobrecarga); Pyro contra Hydro é 0.8 porque as chamas são apagadas. O Anemo causa 1.35 contra qualquer elemento diferente. O Electro tem 1.6 contra Hydro (Eletrocussão) e 1.3 contra Pyro. O Hydro tem 1.6 contra Pyro (Vaporização) e 1.3 contra Electro (Condução). Elementos iguais sofrem resistência, com multiplicador 0.65. Além disso, os monstros Pyro têm 35% de chance de causar **Queimadura**, um efeito contínuo de dois turnos processado no fim de cada turno válido. Centralizar isso no enum evita `if` espalhados pelo código e deixa a regra isolada e testável."
 
 **Slide 9 — Batalha, Jogo e proteção de turno (13:00 – 14:45)**
 
@@ -104,11 +105,11 @@
 
 > "Obrigada, Isabela. Eu fiquei com a interface. Toda a tela foi construída em Swing puro, sem editor visual e sem bibliotecas de tema. A classe `TemaFantasia` centraliza as cores, as fontes e a criação de componentes, como os botões de madeira, com a estética de grimório e pergaminho. Cada elemento tem uma cor própria, de modo que o jogador identifica a afinidade rapidamente. A `TelaJogo` tem duas abas: a ficha do herói, onde se cria o personagem, e a torre, onde acontece a batalha. Os diálogos de inventário, de recompensa de baú, de fim de jogo, de guia da torre e de sobre são modais e independentes."
 
-**Slide 12 — Decisões de UX e Game Feel (17:30 – 18:30)**
+**Slide 12 — Experiência do usuário (17:30 – 18:30)**
 
-> "Pensando na experiência do usuário, a criação do personagem mostra uma **prévia dinâmica** de atributos e habilidade assim que a classe ou o elemento muda; o combate conta com **atalhos rápidos de teclado** (tecla A para atacar, H para habilidade e M para mochila); além do log narrativo em pergaminho, o card do monstro possui um **rótulo animado em tempo real** que exibe na hora os acertos críticos, reações de vaporização e esquivas; e a mochila de itens possui badges claros indicando curas que removem queimadura. Vamos agora ao jogo, que vale mais que qualquer slide."
+> "Pensando na experiência do usuário, a criação do personagem mostra uma **prévia dinâmica** de atributos e habilidade assim que a classe ou o elemento muda; o combate tem atalhos de teclado, A para atacar, H para habilidade e M para mochila; o combate possui animações com rótulos dinâmicos de reações e críticos no card do monstro; o log narra cada turno; e as ações inválidas geram mensagem clara em vez de falha silenciosa. Existe um manual do usuário e um guia da torre dentro do próprio jogo. Vamos agora ao jogo, que vale mais que qualquer slide."
 
-**Slide 13 — Demonstração ao vivo (18:30 – 24:00)** → siga o **Guia de Gameplay** na seção 4. Enquanto Celina opera, Isabela Dantas narra os conceitos de POO e Isabela Rocha cuida do cronômetro.
+**Slide 13 — Demonstração ao vivo (18:30 – 24:00)** → siga o **Guia de Gameplay** na seção 4. Enquanto Celina opera, Isabela Dantas narra os conceitos de POO (curtos, uma frase por evento) e Isabela Rocha cuida do cronômetro.
 
 *Transição final:* "Como vocês viram, o salvamento recuperou exatamente o estado do herói. Isso nos leva à parte de qualidade, que a Isabela Dantas apresenta."
 
@@ -118,11 +119,11 @@
 
 **Slide 14 — Testes automatizados (24:00 – 25:15) · Isabela Dantas**
 
-> "Para garantir que o que mostramos funciona por construção, e não por sorte, criamos o `TesteIntegracao`, uma suíte independente da interface com **53 asserções**. Ela cobre as constantes e os construtores das classes, a herança e o polimorfismo das habilidades, o ciclo e os multiplicadores elementais, o dano crítico, a progressão e a subida de nível, o tratamento das exceções e o controle de turnos, o inventário e o consumo de itens, e a persistência por andar. Como o domínio não depende do Swing, qualquer pessoa roda a suíte pela linha de comando e vê o resultado verde."
+> "Para garantir que o que mostramos funciona por construção, e não por sorte, criamos o `TesteIntegracao`, uma suíte independente da interface com **53 asserções**. Ela cobre as constantes e os construtores das classes, a herança e o polimorfismo das habilidades, o ciclo e os multiplicadores elementais, o dano crítico, a progressão e a subida de nível, o tratamento das exceções e o controle de turnos, o inventário e o consumo de itens, e a persistência por andar. Como o domínio não depende do Swing, qualquer pessoa roda a suíte pela linha de comando e vê o resultado."
 
 **Slide 15 — Persistência (25:15 – 26:00) · Isabela Dantas**
 
-> "A persistência é feita pelo `GerenciadorPersistencia`, que grava em um arquivo texto os registros `ANDAR`, `HEROI` e `ITEM`, separados por ponto e vírgula. Na leitura, cada linha é validada: registro desconhecido, linha incompleta ou item antes do herói geram `PersistenciaException`. Os recursos são abertos com *try-with-resources*, então os arquivos sempre são fechados com segurança. O checkpoint guarda o andar, o herói com todos os seus atributos consolidados e os itens da mochila."
+> "A persistência é feita pelo `GerenciadorPersistencia`, que grava em um arquivo texto os registros `ANDAR`, `HEROI` e `ITEM`, separados por ponto e vírgula. Na leitura, cada linha é validada: registro desconhecido, linha incompleta ou item antes do herói geram `PersistenciaException`. Os recursos são abertos com *try-with-resources*, então os arquivos sempre são fechados. O checkpoint guarda o andar, o nome, a classe, o elemento, o nível, vida, mana, ataque, defesa e o inventário."
 
 **Slide 16a — QA e validação (26:00 – 27:00) · Celina**
 
@@ -160,102 +161,145 @@
 
 ## 4. Guia do gameplay ao vivo (Bloco 3 — até 5:30 de demo, dentro de um total de 8 min)
 
+> **Atenção:** o jogo usa números aleatórios (crítico, esquiva, eventos entre andares). Este roteiro é um caminho recomendado, com plano B para cada passo. Ensaie.
+
 ### Preparação da demo
 
 - Abrir o jogo já na aba **"📜 Ficha do Herói / Criação"**.
-- Ter em mente a sequência: Espadachim com 40 de Mana inicial e custo de 15 por habilidade.
+- Ter em mente a sequência de classes e custos de habilidade: Espadachim 40 MP (habilidade custa 15), Arcanista 75 MP (20), Atirador 55 MP (14), Catalisador 80 MP (22).
 
 ### Passo 1 — Criação do personagem com prévia dinâmica (≈1:00)
 
 1. Digitar um nome (ex.: "Viajante").
-2. Clicar em uma classe e depois alternar entre elementos (**PYRO, HYDRO, ANEMO, ELECTRO**), mostrando a prévia de atributos e de habilidade mudando em tempo real.
-3. **Escolha recomendada:** escolher **Espadachim** com elemento **HYDRO**. O andar 1 é o Slime Gigante Pyro, o que produz **Vaporização (x1.6)** logo de início. O Espadachim começa com 40 de Mana e sua habilidade consome 15 MP: com dois usos (30 MP), sobram apenas 10 MP, facilitando demonstrar a exceção de mana em seguida!
+2. Clicar em uma classe e depois alternar entre elementos (**PYRO, HYDRO, ANEMO, ELECTRO**), mostrando a prévia de atributos e de habilidade mudando.
+3. **Recomendação estratégica:** escolher **Espadachim** com elemento **HYDRO**. 
+   - O andar 1 é o Slime Gigante Pyro, então a habilidade Hydro contra Pyro produz a **Vaporização (x1.6)**, a reação mais visível e potente.
+   - O Espadachim tem exatamente **40 de Mana** e a habilidade consome **15 de Mana**. No primeiro turno sobram 25; no segundo turno sobram 10; no terceiro turno a mana é insuficiente, garantindo o disparo perfeito da exceção ao vivo!
 4. Narração (Dantas): "A classe define a hierarquia, o elemento define a afinidade; a prévia vem dos métodos abstratos implementados em cada subclasse."
 5. Clicar em **"⚔ Iniciar Aventura na Torre"**.
 
-### Passo 2 — Rodada de combate e animação visual (≈2:00)
+### Passo 2 — Rodada de combate e feedback dinâmico (≈2:00)
 
-1. **Ataque básico** (botão "⚔ Atacar" ou tecla rápida **A**). Apontar no log o dano e, se ocorrer, o crítico ou a esquiva da passiva.
-2. **Habilidade com reação** (botão "✨ Habilidade" ou tecla rápida **H**). Mostrar no log o texto **[VAPORIZAÇÃO! Dano x1.6]** e apontar o **rótulo animado em azul** abaixo da barra do monstro (`💧 VAPORIZAÇÃO! (x1.6 DANO)`).
-3. Apontar o contra-ataque do monstro e o efeito de **Queimadura** se ocorrer.
-4. Narração (Celina): "Vejam que além do log em estilo pergaminho, o combate agora exibe um feedback visual em tempo real no card do monstro!"
+1. **Ataque básico** (botão "⚔ Atacar" ou tecla **A**). Apontar no log o dano e, se acontecer, **[💥 ACERTO CRÍTICO!]** ou a **esquiva** ("💨 … esquivou"). Repetir o ataque até aparecer um crítico ou uma esquiva; se demorar, não insistir mais de 3 vezes (a chance de crítico do herói é 15% por golpe).
+2. **Habilidade com reação** (botão "✨ Habilidade" ou tecla **H**). 
+   - Mostrar no log o texto **[VAPORIZAÇÃO! Dano x1.6]** e a mana diminuindo.
+   - **Destaque visual (Celina):** apontar o rótulo animado que surge logo abaixo da barra de HP do Monstro com o texto colorido **💧 VAPORIZAÇÃO! (x1.6 DANO)** ou **💥 ACERTO CRÍTICO!**, comprovando o dinamismo visual da interface.
+3. Apontar as ações do monstro (contra-ataque, Lança-Chamas com **queimadura**, esquiva do herói).
+4. Narração (Dantas): "Essa linha vem de `Elemento.getDescricaoReacao`; o mesmo método calcula o multiplicador usado no dano."
+
+*Plano B se não aparecer crítico:* diga que o crítico é 15% por golpe, que o Atirador tem 28% e que a suíte de testes valida o cálculo do crítico (`testarDanoCriticoEElementalDoCatalisador`).
 
 ### Passo 3 — Ação sem recurso: exceção e proteção de turno (≈1:00)
 
-1. Usar a Habilidade pela segunda vez (gasta mais 15 MP, restando 10 MP).
-2. Na terceira rodada, tentar usar a Habilidade com apenas 10 MP restantes.
-3. O jogo exibe a mensagem de **energia insuficiente** (origem: `ManaInsuficienteException`). Mostrar que o **número do turno não avançou**, que o monstro **não contra-atacou** e que a **vida do herói não foi penalizada**.
-4. Abrir a **Mochila** (tecla **M**), mostrando os badges universais `[+] CURA` e `[*] MANA`, e consumir um Éter de Mana para restaurar a energia.
-5. Narração (Dantas): "A habilidade é tentada antes dos efeitos de turno; se falhar, a exceção interrompe tudo e nada é alterado."
+1. Com pouca mana (10 MP restantes), clicar novamente em **Habilidade** (ou tecla **H**).
+2. O jogo exibe a mensagem de **mana insuficiente** (origem: `ManaInsuficienteException`). Mostrar que o **número do turno não avançou**, que o monstro **não contra-atacou** e que a **vida do herói não mudou**.
+3. Abrir a **Mochila** (tecla **M**) e usar um item com os badges universais `[+] CURA` ou `[*] MANA`, mostrando o `Inventario` funcionando.
+4. Narração (Dantas): "A habilidade é tentada antes dos efeitos de turno; se falhar, a exceção interrompe tudo e nada é alterado."
+
+*Plano B se o monstro morrer antes de a mana acabar:* continue para o Passo 4 e, no andar seguinte, repita a tentativa sem recurso. Como o Espadachim tem só 40 de mana, ela acaba rápido.
 
 ### Passo 4 — Vitória do andar, baú e subida de nível (≈1:00)
 
 1. Derrotar o guardião do andar 1.
-2. Mostrar o **diálogo de recompensa** e o **aviso de subida de nível** (bônus canônico: +15 HP máx., +8 Mana máx., +4 Ataque, +2 Defesa, centralizados em `Heroi`).
-3. O evento entre andares é sorteado: **Baú Mímico (30%)**, **Fonte Mística (25%)**, **Altar dos Titãs (20%)** ou **Baú de Tesouro (25%)**. Se vier o mímico, destacar que o inimigo é do mesmo tipo `Monstro` com a flag `eMimico`.
+2. Mostrar o **diálogo de recompensa** e o **aviso de subida de nível** (bônus canônico: +15 HP máx., +8 Mana máx., +4 Ataque, +2 Defesa, definidos em constantes de `Heroi`).
+3. O evento entre andares é sorteado: **Baú Mímico (30%)**, **Fonte Mística (25%)**, **Altar dos Titãs (20%)** ou **Baú de Tesouro (25%)**. Comentar o que cair; se vier o mímico, é uma ótima oportunidade de mostrar que o inimigo é do mesmo tipo `Monstro` com a flag `eMimico`, derrotado para ganhar o **Elixir dos Arcontes**.
+4. Se quiser, abrir **Guia da Torre e Elementos** (menu ou atalho F1) por 5 segundos.
 
 ### Passo 5 — Salvar checkpoint e carregar (≈1:00)
 
-1. Clicar em **"💾 Salvar"** (ou `Ctrl+S`). Mostrar a confirmação do checkpoint no início do andar.
-2. Desferir um ataque ou gastar mana para alterar propositalmente o estado atual.
-3. Clicar em **"📂 Carregar"** (ou `Ctrl+O`). Mostrar que o estado **retorna exatamente** ao do checkpoint (vida, mana, atributos e inventário consolidados).
-4. Narração (Dantas): "O arquivo tem um registro por linha e a leitura valida cada um; um save corrompido lança `PersistenciaException`."
+1. Clicar em **"💾 Salvar"** (ou atalho **Ctrl+S**). Mostrar a confirmação.
+2. Anotar mentalmente vida, mana, nível e itens do herói.
+3. Gastar mana ou levar dano com um ataque para alterar o estado.
+4. Clicar em **"📂 Carregar"** (ou atalho **Ctrl+O**). Mostrar que o estado **volta exatamente** ao do checkpoint (nível, vida, mana, atributos e inventário).
+5. Opcional, se der tempo: abrir `save_jogo.txt` no editor e mostrar as linhas `ANDAR;`, `HEROI;` e `ITEM;`.
+6. Narração (Dantas): "O arquivo tem um registro por linha e a leitura valida cada um; um save inválido lança `PersistenciaException`."
+
+**Tempo total estimado da demo:** 5 a 6 minutos de ações + 2 de folga e narração = 8 minutos.
+
+### Se algo der errado ao vivo
+
+- **O jogo não abre:** mostrar os prints `docs/prints/01_criacao_personagem.png`, `02_batalha_turnos.png`, `03_guia_ou_inventario.png` e `04_salvar_carregar.png` (já no repositório) e rodar a suíte `TesteIntegracao` no terminal.
+- **O save falha:** copiar o `save_jogo.txt` de reserva para a pasta de execução e clicar em Carregar.
+- **O sorteio não ajuda (sem crítico/esquiva/evento):** explicar que são probabilidades, apontar o código correspondente (`random.nextDouble() < getChanceCritico()`) e seguir.
 
 ---
 
 ## 5. Estrutura completa dos slides
 
+> Total sugerido: **17 slides** (16 de conteúdo + 1 de perguntas). Estilo visual: pergaminho/grimório (fundo bege-envelhecido, títulos em serifa, cores por elemento: Pyro vermelho, Hydro azul, Anemo verde-água, Electro amarelo/roxo). Máximo de 5 bullets por slide e fonte mínima de 24 pt.
+
 ### Slide 1 — Torre dos Elementos: RPG em Java SE & Swing
 **Fala:** Isabela Rocha · **Tempo:** 0:45
+
 - Trabalho final de Programação Orientada a Objetos, UFU
 - Equipe: Isabela Rocha, Isabela Dantas e Celina
 - Repositório: github.com/IsabelaR0cha/rpg-poo-java
 
+**Visual:** arte de capa com a torre (ou o print da tela de batalha em tela cheia), nome do projeto em fonte de pergaminho e QR code do repositório.
+
 ### Slide 2 — O jogo e o objetivo acadêmico
 **Fala:** Isabela Rocha · **Tempo:** 1:30
+
 - RPG tático em turnos numa torre de 4 andares: Pyro, Hydro, Anemo e Electro
 - Reações elementais em cadeia, inspiradas em Genshin Impact
 - Java puro, sem bibliotecas externas (`javax.swing` + `java.awt`)
 - Objetivo: aplicar todos os pilares de POO num sistema completo
 
+**Visual:** `docs/prints/02_batalha_turnos.png` à direita e quatro ícones dos elementos à esquerda.
+
 ### Slide 3 — Arquitetura em camadas
 **Fala:** Isabela Rocha · **Tempo:** 1:30
+
 - `modelo` · `combate` · `itens` · `persistencia` · `excecoes` · `telas` · `testes`
 - O domínio não depende da interface (baixo acoplamento)
 - Lógica de combate testável sem janela gráfica
 
+**Visual:** diagrama de pacotes em blocos empilhados, com `telas` no topo apontando para `combate`/`modelo`, e a seta de dependência em uma só direção.
+
 ### Slide 4 — Modelagem UML (diagrama de classes)
 **Fala:** Isabela Rocha · **Tempo:** 2:15
+
 - Interface `Combativel` → classe abstrata `Entidade` → `Heroi` (abstrata) e `Monstro`
 - 4 heróis concretos: `Espadachim`, `Arcanista`, `Atirador`, `Catalisador`
 - `Heroi` agrega `Inventario`, que contém `Item`
 - Enums: `Elemento` e `TipoItem`
 
+**Visual:** recorte do `docs/uml/DiagramaUML.pdf` mostrando a interface `Combativel` e a hierarquia completa, com legenda das setas (herança, realização, agregação).
+
 ### Slide 5 — Abstração e encapsulamento
 **Fala:** Isabela Dantas · **Tempo:** 2:00
+
 - `Entidade` e `Heroi` abstratas: reúnem estado e comportamento comuns
 - Métodos abstratos em `Heroi`: `usarHabilidade`, `getNomeHabilidade`, `getCustoManaHabilidade`
 - Atributos `protected`/`private`; mudanças só por métodos (`gastarMana`, `curar`, `subirNivel`)
 - `receberDano` centralizado: defesa reduz o dano, com mínimo de 2
 
+**Visual:** trecho de código de `Heroi.java` com `public abstract class Heroi extends Entidade` e a assinatura de `usarHabilidade` em destaque.
+
 ### Slide 6 — Polimorfismo e interface
 **Fala:** Isabela Dantas · **Tempo:** 2:00
+
 - Uma chamada `heroi.usarHabilidade(monstro)`, quatro comportamentos
 - `Combativel` desacopla `Batalha` das classes concretas
 - Extensível: novo herói = nova classe, sem alterar `Batalha`
 
-| Classe | HP Base | Mana Base | ATQ | DEF | Custo Habilidade | Passiva |
+**Visual:** tabela com as quatro classes (HP, mana, ataque, defesa, custo, habilidade, passiva) extraída do README, e uma seta "mesma chamada → resultados diferentes".
+
+| Classe | HP | Mana | ATQ | DEF | Custo | Habilidade |
 | :--- | :-: | :-: | :-: | :-: | :-: | :--- |
-| Espadachim | 115 | 40 | 22 | 10 | 15 MP | 16% de Esquiva / Bloqueio |
-| Arcanista | 90 | 75 | 25 | 5 | 20 MP | +15% de Dano Elemental |
-| Atirador | 95 | 55 | 24 | 7 | 14 MP | 28% de Chance de Crítico |
-| Catalisador | 85 | 80 | 23 | 5 | 22 MP | Ataque Básico Elemental |
+| Espadachim | 115 | 40 | 22 | 10 | 15 | Lâmina Elemental |
+| Arcanista | 90 | 75 | 25 | 5 | 20 | Explosão Arcana |
+| Atirador | 95 | 55 | 24 | 7 | 14 | Disparo Perfurante |
+| Catalisador | 85 | 80 | 23 | 5 | 22 | Ressonância Suprema |
 
 ### Slide 7 — POO no código: `@Override` e exceção
 **Fala:** Isabela Dantas · **Tempo:** 1:00
+
 - `@Override` em `usarHabilidade`
 - Verificação de mana antes do efeito
 - `throw new ManaInsuficienteException(...)`
+
+**Visual:** trecho de `Arcanista.java` (~12 linhas) com o `@Override`, o `gastarMana` e o `throw` destacados em cores diferentes.
 
 ```java
 @Override
@@ -270,71 +314,108 @@ public void usarHabilidade(Combativel alvo) throws ManaInsuficienteException {
 
 ### Slide 8 — Reações elementais
 **Fala:** Isabela Dantas · **Tempo:** 2:00
+
 - Regra encapsulada no enum `Elemento.getMultiplicadorContra`
-- Vantagens principais: Pyro $\rightarrow$ Anemo (1.5x), Anemo $\rightarrow$ Todos (1.35x), Electro $\rightarrow$ Hydro (1.6x), Hydro $\rightarrow$ Pyro (1.6x)
-- Reações secundárias: Pyro $\rightarrow$ Electro (1.4x), Hydro $\rightarrow$ Electro (1.3x), Electro $\rightarrow$ Pyro (1.3x) e Pyro $\rightarrow$ Hydro (0.8x)
+- Ciclo prioritário com multiplicadores dedicados para todas as interações diretas
 - Mesmo elemento: **x0.65** (Resistência)
 - Efeito contínuo de **Queimadura**: 2 turnos, 35% de chance dos monstros Pyro
 
+**Visual:** tabela de reações completa do código (linha = atacante, coluna = defensor) com células coloridas:
+
+| Atacante → Defensor | PYRO | HYDRO | ANEMO | ELECTRO |
+| :--- | :-: | :-: | :-: | :-: |
+| **PYRO** | 0.65 | 0.8 | 1.5 | 1.4 |
+| **HYDRO** | 1.6 | 0.65 | 1.0 | 1.3 |
+| **ANEMO** | 1.35 | 1.35 | 0.65 | 1.35 |
+| **ELECTRO** | 1.3 | 1.6 | 1.0 | 0.65 |
+
 ### Slide 9 — Motor de batalha e proteção de turno
 **Fala:** Isabela Dantas · **Tempo:** 1:45
+
 - `Batalha`: turnos, esquiva, crítico (+50% de dano), reação e queimadura
 - `Jogo`: 4 andares + eventos (baú mímico, fonte, altar, baú de tesouro)
 - Habilidade testada **antes** dos efeitos de turno: exceção não consome turno
 
+**Visual:** fluxograma simples (ação do herói → exceção? → sim: volta sem mudar estado / não: dano → contra-ataque → efeitos de fim de turno → próximo turno).
+
 ### Slide 10 — Exceções personalizadas e composição
 **Fala:** Isabela Dantas · **Tempo:** 1:15
+
 - `ManaInsuficienteException`, `ItemNaoEncontradoException`, `PersistenciaException`
-- Exceções verificadas: o compilador obriga o tratamento amigável
+- Exceções verificadas: o compilador obriga o tratamento
 - `Inventario` devolve lista não modificável (defesa do encapsulamento)
+
+**Visual:** três "cartões" de exceção com o ponto onde cada uma é lançada (classe/método) e a mensagem exibida ao jogador (print do diálogo de erro).
 
 ### Slide 11 — Interface Swing e tema Grimório
 **Fala:** Celina · **Tempo:** 1:30
+
 - Swing puro: `javax.swing` + `java.awt`, sem editor visual
 - `TemaFantasia` centraliza cores, fontes e botões de madeira
 - Duas abas: ficha do herói e torre (batalha)
 - Diálogos modais: inventário, baú, fim de jogo, guia da torre, sobre
 
-### Slide 12 — Experiência do usuário (UX) e Game Feel
+**Visual:** `docs/prints/01_criacao_personagem.png` e `docs/prints/03_guia_ou_inventario.png` lado a lado, com legendas.
+
+### Slide 12 — Experiência do usuário
 **Fala:** Celina · **Tempo:** 1:00
-- Prévia dinâmica de atributos e habilidades na criação
-- Atalhos rápidos: **A** (atacar), **H** (habilidade), **M** (mochila)
-- Rótulos animados de combate em tempo real (Crítico, Vaporização, Sobrecarga)
-- Badges universais na mochila indicando itens que removem queimadura
+
+- Prévia dinâmica de atributos, habilidade e afinidade na criação
+- Atalhos rápidos: **A** atacar, **H** habilidade, **M** mochila
+- Rótulos visuais animados de dano e reações no card do monstro
+- Log narrativo por turno e mensagens de erro claras
+- Manual do usuário e guia da torre dentro do jogo
+
+**Visual:** print da batalha com setas destacando as animações de reações, log, barras de vida e mana, botões e atalhos.
 
 ### Slide 13 — Demonstração ao vivo
 **Fala:** Celina (com apoio de Dantas e Rocha) · **Tempo:** 5:30 a 6:00
-- Criação $\rightarrow$ combate $\rightarrow$ exceção $\rightarrow$ vitória $\rightarrow$ salvar/carregar
+
+- Criação → combate → exceção → vitória → salvar/carregar
+
+**Visual:** slide-índice minimalista com os cinco passos numerados e ícones (serve de "cola" para a equipe durante a demo). Deixar o slide aberto e alternar para o jogo.
 
 ### Slide 14 — Testes automatizados
 **Fala:** Isabela Dantas · **Tempo:** 1:15
+
 - `TesteIntegracao`: **53 asserções**, sem interface gráfica
 - Cobre herança, polimorfismo, reações, crítico, progressão, exceções, inventário e persistência
-- Executável pela linha de comando (`java -cp bin testes.TesteIntegracao`)
+- Executável pela linha de comando
+
+**Visual:** print do terminal com a saída da suíte (todas as asserções aprovadas) e a lista dos 8 grupos de testes ao lado.
 
 ### Slide 15 — Persistência de checkpoints
 **Fala:** Isabela Dantas · **Tempo:** 0:45
-- `GerenciadorPersistencia`: salva e carrega arquivo texto formatado (`save_jogo.txt`)
-- Registros `ANDAR`, `HEROI` e `ITEM` validados campo a campo na leitura
-- *try-with-resources* e tratamento com `PersistenciaException`
+
+- `GerenciadorPersistencia`: salva e carrega arquivo texto (`save_jogo.txt`)
+- Registros `ANDAR`, `HEROI`, `ITEM` validados na leitura
+- *try-with-resources* e `PersistenciaException`
+
+**Visual:** `docs/prints/04_salvar_carregar.png` ao lado da estrutura exata do save:
 
 ```text
 ANDAR;2
-HEROI;Viajante;Espadachim;HYDRO;2;96;130;25;48;26;12
-ITEM;Poção de Cura;CURA;30;Restaura 30 HP e remove queimadura.
+HEROI;Viajante;Espadachim;HYDRO;2;96;48;...
+ITEM;Poção de Cura;CURA;30
 ```
 
 ### Slide 16 — QA e conclusão
 **Fala:** Celina (QA, 1:00) e Isabela Rocha (conclusão, 1:00) · **Tempo:** 2:00
+
 - QA: casos manuais de criação, mana insuficiente, item inexistente, salvar/carregar, derrota e eventos
-- Todos os 10 pilares de POO aplicados e comprovados no código
-- Aprendizado: modelagem inicial reduz retrabalho e permite desenvolvimento paralelo
-- Próximos passos: mais classes, múltiplos inimigos, serialização/banco de dados
+- Todos os pilares de POO aplicados num sistema real
+- Aprendizado: modelagem inicial reduz retrabalho e permite trabalho paralelo
+- Próximos passos: mais classes e monstros, vários inimigos por batalha, serialização ou banco de dados
+
+**Visual:** checklist dos pilares de POO com um "✓" ao lado de cada item (classes e objetos, encapsulamento, herança, polimorfismo, classes abstratas, interfaces, agregação/composição, exceções, persistência, testes) e, no rodapé, o link do repositório.
 
 ### Slide 17 — Perguntas
 **Fala:** Todas · **Tempo:** 2:00
-- Agradecimentos e encerramento
+
+- Obrigada! Perguntas?
 - Repositório: github.com/IsabelaR0cha/rpg-poo-java
+
+**Visual:** arte de capa com o QR code do repositório e os nomes da equipe.
 
 ---
 
@@ -346,3 +427,15 @@ ITEM;Poção de Cura;CURA;30;Restaura 30 HP e remove queimadura.
 | Isabela Dantas | 5 a 10, 14 e 15, perguntas de domínio | ≈ 11:30 |
 | Celina | 11 a 13, QA no 16, perguntas de UX | ≈ 9:00 |
 | Perguntas | 17 | 2:00 |
+
+*(Os totais incluem a conclusão compartilhada do Bloco 4. Ajuste cortando exemplos no Bloco 2 se o ensaio passar de 28 minutos.)*
+
+---
+
+## 7. Dicas finais de apresentação
+
+1. **Ensaie com cronômetro**, e corte do Bloco 2 (slide 10) se estiver estourando; é o menos crítico.
+2. **Fale o nome da classe ou do método** ao mostrar um conceito (`Combativel`, `usarHabilidade`, `ManaInsuficienteException`): a banca valoriza o vocabulário exato.
+3. **Evite ler os slides**: eles têm tópicos curtos; a fala traz a explicação.
+4. **Sempre conecte a demo ao código**: cada evento do jogo (crítico, reação, exceção, save) tem um método correspondente para citar.
+5. **Seja transparente sobre limites** (por exemplo, o jogo tem esquiva, mas não uma ação de bloqueio separada). Admitir um limite com segurança passa mais credibilidade do que tentar disfarçá-lo.
