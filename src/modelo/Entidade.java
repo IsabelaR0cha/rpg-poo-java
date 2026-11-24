@@ -53,6 +53,10 @@ public abstract class Entidade implements Combativel {
         this.defesa += valor;
     }
 
+    public void definirHpAtual(int hp) {
+        this.hpAtual = Math.max(0, Math.min(hp, this.hpMax));
+    }
+
     @Override
     public void receberDano(int dano) {
         int reducao = (int) (this.defesa * 0.60);

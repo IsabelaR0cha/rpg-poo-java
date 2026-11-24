@@ -19,6 +19,7 @@ import modelo.Heroi;
 
 public class GerenciadorPersistencia {
     private static final String ARQUIVO_PADRAO = "save_jogo.txt";
+    private static final String ARQUIVO_PLATINA = "conquistas_torre.txt";
     private final String caminhoArquivo;
 
     public GerenciadorPersistencia() {
@@ -29,16 +30,55 @@ public class GerenciadorPersistencia {
         this.caminhoArquivo = caminhoArquivo;
     }
 
+    public void registrarVitoriaClasse(String nomeClasse) {
+        if (nomeClasse == null || nomeClasse.trim().isEmpty()) {
+            return;
+        }
+        java.util.Set<String> classes = carregarClassesVitoriosas();
+        classes.add(nomeClasse.trim());
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARQUIVO_PLATINA))) {
+            for (String c : classes) {
+                writer.write(c);
+                writer.newLine();
+            }
+        } catch (IOException ignored) {
+        }
+    }
+
+    public java.util.Set<String> carregarClassesVitoriosas() {
+        java.util.Set<String> classes = new java.util.HashSet<>();
+        File f = new File(ARQUIVO_PLATINA);
+        if (!f.exists()) {
+            return classes;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
+            String l;
+            while ((l = reader.readLine()) != null) {
+                if (!l.trim().isEmpty()) {
+                    classes.add(l.trim());
+                }
+            }
+        } catch (IOException ignored) {
+        }
+        return classes;
+    }
+
     public void salvarJogo(Jogo jogo) throws PersistenciaException {
         if (jogo == null || jogo.getHeroi() == null) {
             throw new PersistenciaException("[!] Não há jogo ou herói válido para salvar.");
         }
 
         Heroi heroi = jogo.getHeroi();
+        modelo.Monstro monstro = jogo.getMonstroAtual();
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.caminhoArquivo))) {
             writer.write("ANDAR;" + jogo.getNumeroAndarAtual());
             writer.newLine();
+
+            if (monstro != null && monstro.estaVivo()) {
+                writer.write("MONSTRO;" + monstro.getHpAtual() + ";" + monstro.getHpMax());
+                writer.newLine();
+            }
 
             writer.write("HEROI;"
                     + heroi.getClass().getSimpleName() + ";"
@@ -72,6 +112,7 @@ public class GerenciadorPersistencia {
         }
 
         int andarSalvo = 1;
+        int hpMonstroSalvo = -1;
         Heroi heroiCarregado = null;
         boolean primeiroItem = true;
 
@@ -91,6 +132,12 @@ public class GerenciadorPersistencia {
                             throw new PersistenciaException("[!] Linha ANDAR inválida no arquivo de save.");
                         }
                         andarSalvo = Integer.parseInt(partes[1]);
+                        break;
+
+                    case "MONSTRO":
+                        if (partes.length >= 2) {
+                            hpMonstroSalvo = Integer.parseInt(partes[1]);
+                        }
                         break;
 
                     case "HEROI":
@@ -134,7 +181,7 @@ public class GerenciadorPersistencia {
             }
 
             int indiceAndar = Math.max(0, Math.min(andarSalvo - 1, 3));
-            return Jogo.restaurarJogo(heroiCarregado, indiceAndar);
+            return Jogo.restaurarJogo(heroiCarregado, indiceAndar, hpMonstroSalvo);
 
         } catch (IOException | IllegalArgumentException e) {
             if (e instanceof PersistenciaException) {

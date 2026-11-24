@@ -290,11 +290,18 @@ public class Jogo {
     }
 
     public static Jogo restaurarJogo(Heroi heroi, int indiceAndar) {
+        return restaurarJogo(heroi, indiceAndar, -1);
+    }
+
+    public static Jogo restaurarJogo(Heroi heroi, int indiceAndar, int hpMonstroSalvo) {
         Jogo jogo = new Jogo(heroi);
         jogo.andarAtual = Math.max(0, Math.min(indiceAndar, jogo.guardioesAndares.size() - 1));
         jogo.jogoFinalizado = false;
         jogo.vitoriaFinal = false;
         jogo.iniciarBatalhaDoAndar();
+        if (hpMonstroSalvo > 0 && jogo.getMonstroAtual() != null) {
+            jogo.getMonstroAtual().definirHpAtual(hpMonstroSalvo);
+        }
         return jogo;
     }
 }

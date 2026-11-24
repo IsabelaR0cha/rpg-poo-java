@@ -59,7 +59,7 @@ public class Batalha {
             int danoCausado = hpAntes - this.monstro.getHpAtual();
             String msgCritico = critico ? " [💥 ACERTO CRÍTICO!]" : "";
 
-            log.append(this.heroi.getNome()).append(" atacou ")
+            log.append("▶ AÇÃO DO HERÓI: ").append(this.heroi.getNome()).append(" atacou ")
                .append(this.monstro.getNome()).append(msgCritico)
                .append(" causando ").append(danoCausado).append(" de dano.\n");
         }
@@ -84,11 +84,11 @@ public class Batalha {
 
         String reacao = this.heroi.getElemento().getDescricaoReacao(this.monstro.getElemento());
 
-        log.append("✨ ").append(this.heroi.getNome()).append(" usou ")
+        log.append("✨ HABILIDADE DO HERÓI: ").append(this.heroi.getNome()).append(" conjurou ")
            .append(this.heroi.getNomeHabilidade()).append(" (")
            .append(this.heroi.getElemento()).append(") contra ")
            .append(this.monstro.getNome()).append(reacao)
-           .append(" causando ").append(danoCausado).append(" de dano!\n");
+           .append(" causando ").append(danoCausado).append(" de dano elemental!\n");
 
         finalizarTurnoAposAcaoHeroi(log);
         return log.toString();
@@ -106,7 +106,7 @@ public class Batalha {
         StringBuilder log = new StringBuilder();
         log.append("[Turno ").append(this.turno).append("]\n");
 
-        log.append("🧪 ").append(this.heroi.getNome()).append(" utilizou ")
+        log.append("🧪 MOCHILA DO HERÓI: ").append(this.heroi.getNome()).append(" utilizou ")
            .append(nomeItem).append(" da mochila.\n");
 
         finalizarTurnoAposAcaoHeroi(log);
@@ -116,10 +116,11 @@ public class Batalha {
     private void finalizarTurnoAposAcaoHeroi(StringBuilder log) {
         // Se o monstro sobreviveu, realiza o contra-ataque
         if (this.monstro.estaVivo()) {
+            log.append("◀ REAÇÃO DO INIMIGO: ");
             String acaoMonstro = this.monstro.agirNoTurno(this.heroi, this.turno);
             log.append(acaoMonstro);
         } else {
-            log.append("\n⭐ ").append(this.monstro.getNome()).append(" foi derrotado!");
+            log.append("\n⭐ TRIUNFO: ").append(this.monstro.getNome()).append(" foi subjugado!");
         }
 
         // Fim de um turno concluído com sucesso: processa efeitos contínuos válidos (ex: Queimadura)

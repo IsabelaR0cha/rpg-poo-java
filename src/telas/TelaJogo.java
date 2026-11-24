@@ -373,9 +373,12 @@ public class TelaJogo extends JFrame {
         lblIcone.setFont(new Font("SansSerif", Font.PLAIN, 28));
         lblIcone.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel lblNome = new JLabel(nomeClasse, JLabel.CENTER);
+        boolean platinada = persistencia.carregarClassesVitoriosas().contains(nomeClasse);
+        String tituloClasse = platinada ? "★ " + nomeClasse + " ★" : nomeClasse;
+
+        JLabel lblNome = new JLabel(tituloClasse, JLabel.CENTER);
         lblNome.setFont(TemaFantasia.FONTE_SUBTITULO);
-        lblNome.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
+        lblNome.setForeground(platinada ? new Color(180, 83, 9) : TemaFantasia.TEXTO_SEPIA_ESCURO);
         lblNome.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblArq = new JLabel(arquetipo, JLabel.CENTER);
@@ -408,20 +411,31 @@ public class TelaJogo extends JFrame {
     }
 
     private void atualizarSelecaoCardClasse() {
+        java.util.Set<String> platinadas = persistencia.carregarClassesVitoriosas();
         for (int i = 0; i < nomesClasses.length; i++) {
             boolean ativo = nomesClasses[i].equals(classeSelecionada);
+            boolean platinada = platinadas.contains(nomesClasses[i]);
+
             if (ativo) {
                 cardsClasse[i].setBackground(TemaFantasia.PERGAMINHO_DESTACADO);
+                Color corBordaExterna = platinada ? new Color(212, 175, 55) : TemaFantasia.MADEIRA_ESCURA;
                 cardsClasse[i].setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(TemaFantasia.MADEIRA_ESCURA, 3, true),
-                        BorderFactory.createLineBorder(TemaFantasia.OURO_BORDA, 1)
+                        BorderFactory.createLineBorder(corBordaExterna, 3, true),
+                        BorderFactory.createLineBorder(TemaFantasia.OURO_BORDA, platinada ? 2 : 1)
                 ));
             } else {
-                cardsClasse[i].setBackground(TemaFantasia.PERGAMINHO_CLARO);
-                cardsClasse[i].setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(TemaFantasia.MADEIRA_CLARA, 1, true),
-                        BorderFactory.createEmptyBorder(2, 2, 2, 2)
-                ));
+                cardsClasse[i].setBackground(platinada ? new Color(255, 250, 235) : TemaFantasia.PERGAMINHO_CLARO);
+                if (platinada) {
+                    cardsClasse[i].setBorder(BorderFactory.createCompoundBorder(
+                            BorderFactory.createLineBorder(new Color(212, 175, 55), 2, true),
+                            BorderFactory.createEmptyBorder(2, 2, 2, 2)
+                    ));
+                } else {
+                    cardsClasse[i].setBorder(BorderFactory.createCompoundBorder(
+                            BorderFactory.createLineBorder(TemaFantasia.MADEIRA_CLARA, 1, true),
+                            BorderFactory.createEmptyBorder(2, 2, 2, 2)
+                    ));
+                }
             }
         }
         revalidate();
@@ -526,7 +540,10 @@ public class TelaJogo extends JFrame {
         cardBatalhaHeroi = new JPanel();
         cardBatalhaHeroi.setLayout(new BoxLayout(cardBatalhaHeroi, BoxLayout.Y_AXIS));
         cardBatalhaHeroi.setBackground(TemaFantasia.PERGAMINHO_DESTACADO);
-        cardBatalhaHeroi.setBorder(TemaFantasia.criarBordaMadeiraPergaminho("Viajante (Herói)"));
+        cardBatalhaHeroi.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(46, 125, 50), 2, true),
+                TemaFantasia.criarBordaMadeiraPergaminho("Aliado: Viajante (Herói)")
+        ));
 
         lblHeroiTitulo = new JLabel("Aether (Nv. 1) — Espadachim [PYRO]");
         lblHeroiTitulo.setFont(TemaFantasia.FONTE_SUBTITULO);
@@ -551,7 +568,10 @@ public class TelaJogo extends JFrame {
         cardBatalhaMonstro = new JPanel();
         cardBatalhaMonstro.setLayout(new BoxLayout(cardBatalhaMonstro, BoxLayout.Y_AXIS));
         cardBatalhaMonstro.setBackground(TemaFantasia.PERGAMINHO_DESTACADO);
-        cardBatalhaMonstro.setBorder(TemaFantasia.criarBordaMadeiraPergaminho("Guardião do Andar"));
+        cardBatalhaMonstro.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 40, 30), 2, true),
+                TemaFantasia.criarBordaMadeiraPergaminho("Inimigo: Guardião do Andar")
+        ));
 
         lblMonstroTitulo = new JLabel("Slime Gigante Pyro [PYRO]");
         lblMonstroTitulo.setFont(TemaFantasia.FONTE_SUBTITULO);
@@ -623,12 +643,12 @@ public class TelaJogo extends JFrame {
         painelAcoes.setBackground(TemaFantasia.PERGAMINHO_MEDIO);
         painelAcoes.setBorder(BorderFactory.createMatteBorder(3, 0, 0, 0, TemaFantasia.MADEIRA_ESCURA));
 
-        btnAtacar = TemaFantasia.criarBotaoMadeira("⚔ Atacar (A)", new Color(180, 40, 30));
-        btnHabilidade = TemaFantasia.criarBotaoMadeira("✨ Habilidade (H)", new Color(25, 118, 210));
-        btnMochila = TemaFantasia.criarBotaoMadeira("🎒 Mochila (M)", new Color(46, 125, 50));
-        btnSalvar = TemaFantasia.criarBotaoMadeira("💾 Salvar", new Color(180, 83, 9));
-        btnCarregar = TemaFantasia.criarBotaoMadeira("📂 Carregar", TemaFantasia.MADEIRA_MEDIA);
-        btnReiniciar = TemaFantasia.criarBotaoMadeira("📜 Novo Herói", new Color(110, 71, 42));
+        btnAtacar = TemaFantasia.criarBotaoMadeira("Atacar [A]", new Color(180, 40, 30));
+        btnHabilidade = TemaFantasia.criarBotaoMadeira("Habilidade [H]", new Color(25, 118, 210));
+        btnMochila = TemaFantasia.criarBotaoMadeira("Mochila [M]", new Color(46, 125, 50));
+        btnSalvar = TemaFantasia.criarBotaoMadeira("Salvar", new Color(180, 83, 9));
+        btnCarregar = TemaFantasia.criarBotaoMadeira("Carregar", TemaFantasia.MADEIRA_MEDIA);
+        btnReiniciar = TemaFantasia.criarBotaoMadeira("Novo Herói", new Color(110, 71, 42));
 
         btnAtacar.setMnemonic(KeyEvent.VK_A);
         btnHabilidade.setMnemonic(KeyEvent.VK_H);
@@ -881,6 +901,9 @@ public class TelaJogo extends JFrame {
 
         // Se o jogo encerrou (derrota ou vitória final), abre o modal de fim de jogo com opções
         if (jogo != null && jogo.isJogoFinalizado()) {
+            if (jogo.isVitoriaFinal()) {
+                persistencia.registrarVitoriaClasse(jogo.getHeroi().getClass().getSimpleName());
+            }
             DialogFimDeJogo dlgFim = new DialogFimDeJogo(
                     this,
                     jogo.isVitoriaFinal(),
@@ -975,8 +998,11 @@ public class TelaJogo extends JFrame {
         lblMonstroStatus.setText("ATQ: " + monstro.getAtaque() + " | DEF: " + monstro.getDefesa()
                 + " | Andar " + monstro.getAndar());
 
-        // Moldura do Monstro adota a cor do elemento dominante
-        cardBatalhaMonstro.setBorder(TemaFantasia.criarBordaMetalica(corElementoMonstro));
+        // Moldura do Monstro adota a cor do elemento dominante com identificador claro de inimigo
+        cardBatalhaMonstro.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(180, 40, 30), 2, true),
+                TemaFantasia.criarBordaMetalicaComTitulo("Inimigo: " + monstro.getNome(), corElementoMonstro)
+        ));
 
         // 3. Banner do Andar Atual
         String extra = monstro.isMimico() ? " — ⚠️ EMBOSCADA DE MÍMICO!" : " — Guardião Elemental";
@@ -992,8 +1018,8 @@ public class TelaJogo extends JFrame {
         btnCarregar.setEnabled(true);
         btnReiniciar.setEnabled(true);
 
-        btnHabilidade.setText("✨ Habilidade (" + heroi.getCustoManaHabilidade() + " MP) [H]");
-        btnMochila.setText("🎒 Mochila (" + heroi.getInventario().getItens().size() + ") [M]");
+        btnHabilidade.setText("Habilidade (" + heroi.getCustoManaHabilidade() + " MP) [H]");
+        btnMochila.setText("Mochila (" + heroi.getInventario().getItens().size() + ") [M]");
 
         // Atualização do Item de Menu Salvar
         itemMenuSalvar.setEnabled(partidaAtiva);
