@@ -24,22 +24,23 @@ O jogador assume o papel de um Viajante que desbrava os 4 andares de uma torre m
 
 ## 🏛️ Arquitetura e Conceitos de POO
 
-O projeto foi projetado com separação rigorosa de camadas e atende integralmente a todos os pilares da Orientação a Objetos:
+O projeto foi projetado com separação rigorosa de camadas e atende integralmente a todos os pilares da Orientação a Objetos exigidos na disciplina:
 
-- **Classes e Objetos**: Instanciação limpa e gerenciamento de ciclo de vida das entidades (`Heroi`, `Monstro`, `Batalha`, `Jogo`, `Item`).
-- **Encapsulamento**: Atributos privados e protegidos, métodos de acesso defensivos e controle restrito de mutações.
-- **Herança**: 
+- [x] **Classes e Objetos**: Instanciação limpa e gerenciamento de ciclo de vida das entidades (`Heroi`, `Monstro`, `Batalha`, `Jogo`, `Item`).
+- [x] **Encapsulamento**: Atributos privados e protegidos, métodos de acesso defensivos e controle restrito de mutações.
+- [x] **Herança**: 
   - Hierarquia de personagens: `Entidade` (abstrata) $\rightarrow$ `Heroi` (abstrata) $\rightarrow$ `Espadachim`, `Arcanista`, `Atirador`, `Catalisador`.
   - Hierarquia de inimigos: `Entidade` $\rightarrow$ `Monstro` (com suporte a variantes e Mímicos).
-- **Polimorfismo**: Sobrescrita dinâmica de `usarHabilidade(Combativel alvo)`, cálculo customizado de críticos, esquiva e reações elementais específicas por subclasse.
-- **Classes Abstratas**: `Entidade` e `Heroi` estabelecem contratos de atributos e comportamentos essenciais.
-- **Interfaces**: `Combativel` desacopla o motor de combate (`Batalha`) das classes concretas, permitindo que qualquer combatente receba dano, execute ações e processe estados.
-- **Composição e Agregação**:
+- [x] **Polimorfismo**: Sobrescrita dinâmica de `usarHabilidade(Combativel alvo)`, cálculo customizado de críticos, esquiva e reações elementais específicas por subclasse.
+- [x] **Classes Abstratas**: `Entidade` e `Heroi` estabelecem contratos de atributos e comportamentos essenciais.
+- [x] **Interfaces**: `Combativel` desacopla o motor de combate (`Batalha`) das classes concretas, permitindo que qualquer combatente receba dano, execute ações e processe estados.
+- [x] **Composição e Agregação**:
   - `Heroi` possui um `Inventario` (agregação/composição) composto por instâncias de `Item`.
   - `Jogo` orquestra o estado consolidado da expedição, delegando o combate à classe `Batalha`.
-- **Persistência de Dados**: `GerenciadorPersistencia` salva e carrega checkpoints em arquivo texto formatado com validação de integridade.
-- **Tratamento de Exceções**: Hierarquia com `ManaInsuficienteException`, `ItemNaoEncontradoException` e `PersistenciaException`, garantindo que ações inválidas sejam tratadas sem interromper o fluxo nem dessincronizar o combate.
-- **Interface Gráfica (Swing + AWT)**: Construção modular em `src/telas/` com paleta de cores temática, cards dinâmicos, barras estilizadas e diálogos modais para inventário, baús de recompensa e fim de jogo.
+- [x] **Persistência de Dados**: `GerenciadorPersistencia` salva e carrega checkpoints em arquivo texto formatado com validação de integridade.
+- [x] **Tratamento de Exceções**: Hierarquia com `ManaInsuficienteException`, `ItemNaoEncontradoException` e `PersistenciaException`, garantindo que ações inválidas sejam tratadas sem interromper o fluxo nem dessincronizar o combate.
+- [x] **Interface Gráfica (Swing + AWT)**: Construção modular em `src/telas/` com paleta de cores temática, cards dinâmicos, animações visuais de combate, barras estilizadas e diálogos modais para inventário, baús de recompensa e fim de jogo.
+- [x] **Testes Automatizados**: Suíte completa e independente de interface em `testes/TesteIntegracao.java` com 53 asserções automatizadas.
 
 ---
 

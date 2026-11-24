@@ -58,9 +58,9 @@ public class DialogInventario extends JDialog {
 
         @Override
         public String toString() {
-            String badge = (item.getTipo() == TipoItem.CURA) ? "[CURA]" : "[MANA]";
+            String badge = (item.getTipo() == TipoItem.CURA) ? "💚 [CURA]" : "🧪 [MANA]";
             return badge + " " + item.getNome() + "  (x" + quantidade + ")  —  Efeito: +" + item.getValorEfeito()
-                    + (item.getTipo() == TipoItem.CURA ? " HP" : " Mana");
+                    + (item.getTipo() == TipoItem.CURA ? " HP (Remove Queimadura)" : " Mana");
         }
     }
 

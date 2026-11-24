@@ -93,7 +93,9 @@ public class TelaJogo extends JFrame {
     private JPanel cardBatalhaMonstro;
     private JLabel lblMonstroTitulo;
     private JLabel lblMonstroStatus;
+    private JLabel lblFeedbackCombate;
     private JProgressBar barraHpMonstro;
+    private javax.swing.Timer timerFeedback;
 
     // Log e Ações
     private JTextArea areaLog;
@@ -557,6 +559,11 @@ public class TelaJogo extends JFrame {
 
         barraHpMonstro = TemaFantasia.criarBarraProgresso("HP: 85 / 85", TemaFantasia.COR_PYRO, TemaFantasia.MADEIRA_ESCURA);
 
+        lblFeedbackCombate = new JLabel(" ", JLabel.CENTER);
+        lblFeedbackCombate.setFont(new Font("Serif", Font.BOLD, 13));
+        lblFeedbackCombate.setForeground(TemaFantasia.COR_PYRO);
+        lblFeedbackCombate.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         lblMonstroStatus = new JLabel("ATQ: 19 | DEF: 6 | Andar 1");
         lblMonstroStatus.setFont(TemaFantasia.FONTE_TEXTO);
         lblMonstroStatus.setForeground(TemaFantasia.TEXTO_SEPIA_ESCURO);
@@ -564,9 +571,11 @@ public class TelaJogo extends JFrame {
         cardBatalhaMonstro.add(lblMonstroTitulo);
         cardBatalhaMonstro.add(Box.createVerticalStrut(4));
         cardBatalhaMonstro.add(barraHpMonstro);
-        cardBatalhaMonstro.add(Box.createVerticalStrut(12));
+        cardBatalhaMonstro.add(Box.createVerticalStrut(4));
+        cardBatalhaMonstro.add(lblFeedbackCombate);
+        cardBatalhaMonstro.add(Box.createVerticalStrut(6));
         cardBatalhaMonstro.add(lblMonstroStatus);
-        cardBatalhaMonstro.add(Box.createVerticalStrut(14));
+        cardBatalhaMonstro.add(Box.createVerticalStrut(10));
 
         painelCombatentes.add(cardBatalhaHeroi);
         painelCombatentes.add(cardBatalhaMonstro);
@@ -614,12 +623,18 @@ public class TelaJogo extends JFrame {
         painelAcoes.setBackground(TemaFantasia.PERGAMINHO_MEDIO);
         painelAcoes.setBorder(BorderFactory.createMatteBorder(3, 0, 0, 0, TemaFantasia.MADEIRA_ESCURA));
 
-        btnAtacar = TemaFantasia.criarBotaoMadeira("⚔ Atacar", new Color(180, 40, 30));
-        btnHabilidade = TemaFantasia.criarBotaoMadeira("✨ Habilidade", new Color(25, 118, 210));
-        btnMochila = TemaFantasia.criarBotaoMadeira("🎒 Mochila (2)", new Color(46, 125, 50));
+        btnAtacar = TemaFantasia.criarBotaoMadeira("⚔ Atacar (A)", new Color(180, 40, 30));
+        btnHabilidade = TemaFantasia.criarBotaoMadeira("✨ Habilidade (H)", new Color(25, 118, 210));
+        btnMochila = TemaFantasia.criarBotaoMadeira("🎒 Mochila (M)", new Color(46, 125, 50));
         btnSalvar = TemaFantasia.criarBotaoMadeira("💾 Salvar", new Color(180, 83, 9));
         btnCarregar = TemaFantasia.criarBotaoMadeira("📂 Carregar", TemaFantasia.MADEIRA_MEDIA);
         btnReiniciar = TemaFantasia.criarBotaoMadeira("📜 Novo Herói", new Color(110, 71, 42));
+
+        btnAtacar.setMnemonic(KeyEvent.VK_A);
+        btnHabilidade.setMnemonic(KeyEvent.VK_H);
+        btnMochila.setMnemonic(KeyEvent.VK_M);
+
+        configurarAtalhosCombate(painel);
 
         btnAtacar.addActionListener(e -> executarAtaque());
         btnHabilidade.addActionListener(e -> executarHabilidade());
@@ -726,6 +741,87 @@ public class TelaJogo extends JFrame {
         }
     }
 
+    private void configurarAtalhosCombate(JPanel painel) {
+        painel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0), "acaoAtacar");
+        painel.getActionMap().put("acaoAtacar", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (btnAtacar.isEnabled()) {
+                    executarAtaque();
+                }
+            }
+        });
+
+        painel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_H, 0), "acaoHabilidade");
+        painel.getActionMap().put("acaoHabilidade", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (btnHabilidade.isEnabled()) {
+                    executarHabilidade();
+                }
+            }
+        });
+
+        painel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_M, 0), "acaoMochila");
+        painel.getActionMap().put("acaoMochila", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (btnMochila.isEnabled()) {
+                    abrirMochila();
+                }
+            }
+        });
+    }
+
+    private void animarFeedbackCombate(String log) {
+        if (lblFeedbackCombate == null || log == null) {
+            return;
+        }
+
+        String textoAnimacao = "";
+        Color cor = TemaFantasia.COR_PYRO;
+
+        if (log.contains("CRÍTICO")) {
+            textoAnimacao = "💥 ACERTO CRÍTICO! (150% DANO)";
+            cor = new Color(220, 38, 38);
+        } else if (log.contains("VAPORIZAÇÃO")) {
+            textoAnimacao = "💧 VAPORIZAÇÃO! (x1.6 DANO)";
+            cor = TemaFantasia.COR_HYDRO;
+        } else if (log.contains("PROPAGAÇÃO")) {
+            textoAnimacao = "🔥 DISPERSÃO ELEMENTAL! (x1.5 DANO)";
+            cor = TemaFantasia.COR_PYRO;
+        } else if (log.contains("SOBRECARGA")) {
+            textoAnimacao = "⚡ SOBRECARGA ELÉTRICA! (x1.4 DANO)";
+            cor = TemaFantasia.COR_ELECTRO;
+        } else if (log.contains("ELETROCUSSÃO")) {
+            textoAnimacao = "⚡ ELETROCUSSÃO INTENSA! (x1.6 DANO)";
+            cor = TemaFantasia.COR_ELECTRO;
+        } else if (log.contains("ESQUIVOU")) {
+            textoAnimacao = "🛡️ ESQUIVA / BLOQUEIO!";
+            cor = TemaFantasia.COR_ANEMO;
+        } else if (log.contains("RESISTÊNCIA")) {
+            textoAnimacao = "🛡 RESISTÊNCIA ELEMENTAL (-35%)";
+            cor = TemaFantasia.TEXTO_SEPIA_MEDIO;
+        } else if (log.contains("derrotou")) {
+            textoAnimacao = "✨ INIMIGO DERROTADO!";
+            cor = TemaFantasia.OURO_VELHO;
+        }
+
+        if (!textoAnimacao.isEmpty()) {
+            lblFeedbackCombate.setText(textoAnimacao);
+            lblFeedbackCombate.setForeground(cor);
+
+            if (timerFeedback != null && timerFeedback.isRunning()) {
+                timerFeedback.stop();
+            }
+            timerFeedback = new javax.swing.Timer(2500, evt -> {
+                lblFeedbackCombate.setText(" ");
+            });
+            timerFeedback.setRepeats(false);
+            timerFeedback.start();
+        }
+    }
+
     private void executarAtaque() {
         if (jogo == null || jogo.isJogoFinalizado()) {
             return;
@@ -733,6 +829,7 @@ public class TelaJogo extends JFrame {
 
         String log = jogo.atacarNoTurno();
         adicionarLog(log);
+        animarFeedbackCombate(log);
         verificarRecompensaEAtualizar();
     }
 
@@ -744,6 +841,7 @@ public class TelaJogo extends JFrame {
         try {
             String log = jogo.usarHabilidadeNoTurno();
             adicionarLog(log);
+            animarFeedbackCombate(log);
             verificarRecompensaEAtualizar();
         } catch (ManaInsuficienteException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Energia Insuficiente", JOptionPane.WARNING_MESSAGE);
@@ -894,8 +992,8 @@ public class TelaJogo extends JFrame {
         btnCarregar.setEnabled(true);
         btnReiniciar.setEnabled(true);
 
-        btnHabilidade.setText("✨ Habilidade (" + heroi.getCustoManaHabilidade() + " MP)");
-        btnMochila.setText("🎒 Mochila (" + heroi.getInventario().getItens().size() + ")");
+        btnHabilidade.setText("✨ Habilidade (" + heroi.getCustoManaHabilidade() + " MP) [H]");
+        btnMochila.setText("🎒 Mochila (" + heroi.getInventario().getItens().size() + ") [M]");
 
         // Atualização do Item de Menu Salvar
         itemMenuSalvar.setEnabled(partidaAtiva);
