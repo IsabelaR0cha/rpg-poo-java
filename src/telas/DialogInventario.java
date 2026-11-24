@@ -7,17 +7,12 @@ import itens.TipoItem;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Frame;
-import java.awt.GridLayout;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -58,9 +53,9 @@ public class DialogInventario extends JDialog {
 
         @Override
         public String toString() {
-            String badge = (item.getTipo() == TipoItem.CURA) ? "💚 [CURA]" : "🧪 [MANA]";
-            return badge + " " + item.getNome() + "  (x" + quantidade + ")  —  Efeito: +" + item.getValorEfeito()
-                    + (item.getTipo() == TipoItem.CURA ? " HP (Remove Queimadura)" : " Mana");
+            String badge = (item.getTipo() == TipoItem.CURA) ? "[+] CURA" : "[*] MANA";
+            return badge + "  " + item.getNome() + "  (x" + quantidade + ")  —  Efeito: +" + item.getValorEfeito()
+                    + (item.getTipo() == TipoItem.CURA ? " HP (Cura Queimadura)" : " Mana");
         }
     }
 
