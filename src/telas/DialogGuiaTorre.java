@@ -54,7 +54,7 @@ public class DialogGuiaTorre extends JDialog {
                 + "<ul>"
                 + "<li><b>Pyro:</b> x1.5 contra Anemo (<i>Propagação de Chamas</i>), x1.4 contra Electro (<i>Sobrecarga</i>), x0.8 contra Hydro (<i>Chamas Apagadas</i>).</li>"
                 + "<li><b>Anemo:</b> x1.35 contra qualquer elemento diferente (<i>Dispersão Elemental</i>).</li>"
-                + "<li><b>Electro:</b> x1.6 contra Hydro (<i>Eletrocussão Intensa</i>), x1.3 contra Pyro (<i>Sobrecarga</i>).</li>"
+                + "<li><b>Electro:</b> x1.8 contra Hydro (<i>Eletrocussão Devastadora</i>), x1.3 contra Pyro (<i>Sobrecarga</i>).</li>"
                 + "<li><b>Hydro:</b> x1.6 contra Pyro (<i>Vaporização Crítica</i>), x1.3 contra Electro (<i>Condução Elétrica</i>).</li>"
                 + "<li><b>Mesmo elemento:</b> x0.65 (<i>Resistência Elemental, -35% de dano</i>).</li>"
                 + "</ul>"
@@ -74,7 +74,7 @@ public class DialogGuiaTorre extends JDialog {
                 + "<li><b>Andar 1: Slime Gigante Pyro:</b> Pode aplicar Queimadura contínua por 2 turnos.</li>"
                 + "<li><b>Andar 2: Espectro das Marés (Hydro):</b> Pode conjurar Manto das Marés para atacar e regenerar vida.</li>"
                 + "<li><b>Andar 3: Guardião dos Ventos (Anemo):</b> Alta esquiva (18%) e golpe Ciclone Cortante.</li>"
-                + "<li><b>Andar 4: Arconte da Tempestade (Electro):</b> Chefe final; disfere Raio Cataclísmico e queima 10 de Mana.</li>"
+                + "<li><b>Andar 4: Arconte da Tempestade (Electro):</b> Chefe final; disfere Raio Cataclísmico e queima 8 de Mana.</li>"
                 + "</ul>"
                 + "</body></html>";
 

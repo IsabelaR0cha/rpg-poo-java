@@ -819,7 +819,7 @@ public class TelaJogo extends JFrame {
             textoAnimacao = "⚡ SOBRECARGA ELÉTRICA! (x1.4 DANO)";
             cor = TemaFantasia.COR_ELECTRO;
         } else if (log.contains("ELETROCUSSÃO")) {
-            textoAnimacao = "⚡ ELETROCUSSÃO INTENSA! (x1.6 DANO)";
+            textoAnimacao = "⚡ ELETROCUSSÃO DEVASTADORA! (x1.8 DANO)";
             cor = TemaFantasia.COR_ELECTRO;
         } else if (log.contains("ESQUIVOU")) {
             textoAnimacao = "🛡️ ESQUIVA / BLOQUEIO!";
@@ -931,12 +931,12 @@ public class TelaJogo extends JFrame {
             int andarCheckpoint = jogo.getAndarCheckpoint();
             JOptionPane.showMessageDialog(
                     this,
-                    "Checkpoint salvo com sucesso no início do Andar " + andarCheckpoint + "!\n"
-                    + "Ao carregar, você continuará a partir do início deste andar.",
+                    "Checkpoint salvo com sucesso no Andar " + andarCheckpoint + "!\n"
+                    + "Seu progresso e o HP atual do monstro foram preservados.",
                     "Checkpoint Salvo",
                     JOptionPane.INFORMATION_MESSAGE
             );
-            adicionarLog("💾 [CHECKPOINT SALVO] Progresso preservado no início do Andar " + andarCheckpoint + ".");
+            adicionarLog("💾 [CHECKPOINT SALVO] Progresso preservado no Andar " + andarCheckpoint + ".");
         } catch (PersistenciaException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro ao Salvar", JOptionPane.ERROR_MESSAGE);
         }
@@ -950,11 +950,11 @@ public class TelaJogo extends JFrame {
             JOptionPane.showMessageDialog(
                     this,
                     "Checkpoint do Andar " + andar + " carregado com sucesso!\n"
-                    + "O combate foi reiniciado no início do andar.",
+                    + "O combate foi retomado com o estado salvo do herói e do guardião.",
                     "Checkpoint Carregado",
                     JOptionPane.INFORMATION_MESSAGE
             );
-            adicionarLog("✨ [CHECKPOINT CARREGADO] Retomando a jornada no início do Andar " + andar + ".");
+            adicionarLog("✨ [CHECKPOINT CARREGADO] Retomando a jornada no Andar " + andar + ".");
             atualizarInterfaceBatalha();
             exibirTela(TELA_BATALHA);
         } catch (PersistenciaException ex) {
