@@ -69,6 +69,7 @@ public class TelaJogo extends JFrame {
     private Elemento elementoSelecionado = Elemento.PYRO;
 
     private JPanel[] cardsClasse;
+    private JLabel[] lblNomesClasses;
     private final String[] nomesClasses = {"Espadachim", "Arcanista", "Atirador", "Catalisador"};
     private JButton[] botoesElementos;
 
@@ -264,9 +265,10 @@ public class TelaJogo extends JFrame {
         painelClasses.setBorder(TemaFantasia.criarBordaMadeiraPergaminho("Escolha sua Classe de Combate"));
 
         cardsClasse = new JPanel[nomesClasses.length];
+        lblNomesClasses = new JLabel[nomesClasses.length];
         for (int i = 0; i < nomesClasses.length; i++) {
             final String nomeClasse = nomesClasses[i];
-            cardsClasse[i] = criarCardClasse(nomeClasse);
+            cardsClasse[i] = criarCardClasse(i, nomeClasse);
             painelClasses.add(cardsClasse[i]);
         }
 
@@ -331,7 +333,7 @@ public class TelaJogo extends JFrame {
         return painel;
     }
 
-    private JPanel criarCardClasse(String nomeClasse) {
+    private JPanel criarCardClasse(int indice, String nomeClasse) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(TemaFantasia.PERGAMINHO_CLARO);
@@ -373,13 +375,10 @@ public class TelaJogo extends JFrame {
         lblIcone.setFont(new Font("SansSerif", Font.PLAIN, 28));
         lblIcone.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        boolean platinada = persistencia.carregarClassesVitoriosas().contains(nomeClasse);
-        String tituloClasse = platinada ? "★ " + nomeClasse + " ★" : nomeClasse;
-
-        JLabel lblNome = new JLabel(tituloClasse, JLabel.CENTER);
+        JLabel lblNome = new JLabel(nomeClasse, JLabel.CENTER);
         lblNome.setFont(TemaFantasia.FONTE_SUBTITULO);
-        lblNome.setForeground(platinada ? new Color(180, 83, 9) : TemaFantasia.TEXTO_SEPIA_ESCURO);
         lblNome.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblNomesClasses[indice] = lblNome;
 
         JLabel lblArq = new JLabel(arquetipo, JLabel.CENTER);
         lblArq.setFont(TemaFantasia.FONTE_PEQUENA);
@@ -415,6 +414,11 @@ public class TelaJogo extends JFrame {
         for (int i = 0; i < nomesClasses.length; i++) {
             boolean ativo = nomesClasses[i].equals(classeSelecionada);
             boolean platinada = platinadas.contains(nomesClasses[i]);
+
+            if (lblNomesClasses != null && lblNomesClasses[i] != null) {
+                lblNomesClasses[i].setText(platinada ? "★ " + nomesClasses[i] + " ★" : nomesClasses[i]);
+                lblNomesClasses[i].setForeground(platinada ? new Color(180, 83, 9) : TemaFantasia.TEXTO_SEPIA_ESCURO);
+            }
 
             if (ativo) {
                 cardsClasse[i].setBackground(TemaFantasia.PERGAMINHO_DESTACADO);
@@ -678,6 +682,7 @@ public class TelaJogo extends JFrame {
     private void exibirTela(String nomeTela) {
         cardLayout.show(painelContainer, nomeTela);
         if (TELA_SELECAO.equals(nomeTela)) {
+            atualizarSelecaoCardClasse();
             tabSelecao.setBackground(TemaFantasia.OURO_VELHO);
             tabBatalha.setBackground(TemaFantasia.MADEIRA_MEDIA);
         } else {
