@@ -42,7 +42,7 @@ As habilidades (e os ataques básicos do Catalisador) aplicam multiplicadores co
 - **Anemo:**
   - **x1.35** contra qualquer elemento diferente (*Dispersão Elemental*)
 - **Electro:**
-  - **x1.6** contra **Hydro** (*Eletrocussão Intensa*)
+  - **x1.8** contra **Hydro** (*Eletrocussão Devastadora*)
   - **x1.3** contra **Pyro** (*Sobrecarga*)
 - **Hydro:**
   - **x1.6** contra **Pyro** (*Vaporização*)
@@ -67,9 +67,9 @@ Ao derrotar o monstro de um andar:
    - **+2 Defesa**
    - Recuperação imediata de vida (+30 HP) e mana (+15 MP).
 2. **Eventos Especiais:**
-   - **Baú do Guardião:** Concede poções alquímicas raras (Poção Grande de Cura ou Elixir Concentrado de Mana).
-   - **Mímico Voraz:** Existe uma chance do baú ser um monstro disfarçado com estatísticas aumentadas, iniciando um combate surpresa!
-   - **Fonte Sagrada ou Altar:** Pode restaurar atributos antes da ascensão ao próximo andar.
+   - **Baú do Guardião (30%):** Concede poções alquímicas raras (Poção Grande de Cura ou Elixir Concentrado de Mana).
+   - **Mímico Voraz (18%):** O baú é um monstro disfarçado com estatísticas aumentadas, iniciando um combate surpresa! Derrotá-lo rende o poderoso Elixir dos Arcontes.
+   - **Fonte Sagrada (28%) ou Altar dos Titãs (24%):** Restaura vida/mana ou aumenta atributos permanentes antes da ascensão ao próximo andar.
 
 ---
 
@@ -80,31 +80,48 @@ A interface utiliza componentes **Swing** customizados no estilo **Grimório de 
 - **Tela de Criação / Seleção de Personagem:**
   - Campo para digitar o nome do viajante.
   - Cards interativos com as 4 classes e suas estatísticas base.
+  - Cards de classes com vitórias ganham **moldura dourada** (`#D4AF37`) e distintivo `★ [Classe] ★`.
   - Seleção de afinidade elemental através de abas coloridas.
   - Painel de prévia em tempo real com atributos, descrição da habilidade elemental e custo de mana.
   - Botão de atalho para **Carregar Checkpoint Salvo**.
 - **Tela de Combate (Diário de Batalha):**
+  - **Identificação Visual Clara:**
+    - Ficha do **Aliado: Viajante (Herói)** com contorno verde escuro reforçado.
+    - Ficha do **Inimigo: [Nome do Monstro]** com contorno carmesim reforçado.
   - **Banner do Andar:** Exibe o número do andar atual e reflete a cor do elemento dominante.
   - **Barras Dinâmicas de HP e Mana:** Indicam visualmente e numericamente o estado dos combatentes.
-  - **Botão Habilidade:** Mostra o custo real de mana diretamente no botão (`✨ Habilidade (XX MP)`).
+  - **Botões Clássicos de Ação:** `Atacar [A]`, `Habilidade (XX MP) [H]`, `Mochila (X) [M]`, `Salvar`, `Carregar` e `Novo Herói`.
   - **Mochila de Itens:** Abre a lista agrupada de poções com tipo (`[CURA]` ou `[MANA]`) e valor do efeito.
-  - **Área de Log em Pergaminho:** Registra cada ataque, dano crítico, reação elemental e dano de queimadura.
+  - **Diário de Combate em Pergaminho:** Log estruturado com prefixos explícitos por ação:
+    - `▶ AÇÃO DO HERÓI: ...`
+    - `✨ HABILIDADE DO HERÓI: ...`
+    - `🧪 MOCHILA DO HERÓI: ...`
+    - `◀ REAÇÃO DO INIMIGO: ...`
+    - `⭐ TRIUNFO: ... foi subjugado!`
 - **Menu Superior & Atalhos de Teclado:**
   - `Ctrl + N`: Novo Jogo (reinicia seleção de herói).
-  - `Ctrl + S`: Salvar Checkpoint (grava no início do andar atual).
+  - `Ctrl + S`: Salvar Checkpoint (grava no início do andar ou mid-battle).
   - `Ctrl + O`: Carregar Checkpoint (restaura o estado do arquivo `save_jogo.txt`).
 
 ---
 
-## 6. Sistema de Save e Checkpoint
+## 6. Sistema de Save e Checkpoint Mid-Battle
 
-- O salvamento é estruturado como um **checkpoint de início de andar**. Ao clicar em **Salvar**, o estado do herói, o inventário e o andar atual são persistidos em disco.
-- Ao carregar um jogo salvo, o herói retorna ao início do respectivo andar com seus recursos consolidados, garantindo consistência contra encerramentos inesperados ou emboscadas de mímicos.
+- O salvamento preserva o estado completo da expedição: herói, inventário, andar atual e o **HP exato do monstro** durante a batalha através da linha `MONSTRO;<hpAtual>;<hpMax>`.
+- Ao carregar um jogo salvo, o combate é retomado com o monstro tendo a vida exata que restava no momento do salvamento (não reinicia com 100% de vida).
 - O arquivo gerado é `save_jogo.txt` na raiz da aplicação (ignorado pelo versionador de código conforme `.gitignore`).
 
 ---
 
-## 7. Instruções de Execução
+## 7. Sistema de Conquistas e Platina da Torre
+
+- Ao triunfar sobre o Arconte da Tempestade no 4º andar e zerar a Torre, a vitória daquela classe é salva no arquivo persistente `conquistas_torre.txt`.
+- Na tela de criação/seleção de heróis, os heróis campeões são condecorados com uma **borda dourada brilhante** (`#D4AF37`) e o título `★ [Classe] ★`.
+- O objetivo definitivo de rejogabilidade é vencer a Torre com as 4 classes (*Espadachim*, *Arcanista*, *Atirador* e *Catalisador*) até platinar o jogo e exibir todos os 4 cards dourados.
+
+---
+
+## 8. Instruções de Execução
 
 ### Pré-requisitos
 - **Java SE Development Kit (JDK) 11** ou superior instalado.

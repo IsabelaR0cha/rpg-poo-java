@@ -76,7 +76,7 @@ As habilidades (e os ataques básicos do Catalisador) aplicam multiplicadores co
 - **Ciclo principal:** `Pyro -> Anemo -> Electro -> Hydro -> Pyro`
 - **Pyro:** `x1.5` contra Anemo (*Propagação de Chamas*), `x1.4` contra Electro (*Sobrecarga Explosiva*), `x0.8` contra Hydro (*Chamas Apagadas*).
 - **Anemo:** `x1.35` contra qualquer elemento diferente (*Dispersão Elemental*).
-- **Electro:** `x1.6` contra Hydro (*Eletrocussão Intensa*), `x1.3` contra Pyro (*Sobrecarga*).
+- **Electro:** `x1.8` contra Hydro (*Eletrocussão Devastadora*), `x1.3` contra Pyro (*Sobrecarga*).
 - **Hydro:** `x1.6` contra Pyro (*Vaporização*), `x1.3` contra Electro (*Condução Elétrica*).
 - **Mesmo elemento:** `x0.65` (*Resistência Elemental*, -35% de dano).
 
@@ -88,13 +88,13 @@ Após iniciar a partida, o jogo alterna para a tela **Torre dos Elementos (Batal
 
 ![Tela de batalha por turnos](docs/prints/02_batalha_turnos.png)
 
-Na parte superior ficam as fichas do **Viajante (Herói)** e do **Guardião do Andar**, com barras de HP e Mana, atributos atualizados e alertas de estado (como *Em Chamas!* quando atingido por queimadura). No centro fica o **Diário de Combate da Torre**, com rolagem automática e o botão **Limpar Log** no canto superior direito para limpar o histórico de texto quando desejar.
+Na parte superior ficam as fichas claramente delimitadas do **Aliado: Viajante (Herói)** (com moldura verde) e do **Inimigo: Guardião do Andar** (com moldura carmesim), com barras de HP e Mana, atributos atualizados e alertas de estado (como *Em Chamas!* quando atingido por queimadura). No centro fica o **Diário de Combate da Torre**, com prefixos organizados por combatente (`▶ AÇÃO DO HERÓI: ...`, `✨ HABILIDADE DO HERÓI: ...`, `🧪 MOCHILA DO HERÓI: ...` e `◀ REAÇÃO DO INIMIGO: ...`), rolagem automática e o botão **Limpar Log** no canto superior direito para limpar o histórico de texto quando desejar.
 
 #### Ações de Combate
 
-- **Atacar:** realiza um ataque físico básico (com chance de acerto crítico).
-- **Habilidade:** conjura a habilidade elemental da classe consumindo Mana (mostra o custo em MP no próprio botão).
-- **Mochila:** abre o inventário para utilizar itens de cura (que também removem queimaduras) ou recuperação de Mana. Usar um item consome a ação do turno.
+- **Atacar [A]:** realiza um ataque físico básico (com chance de acerto crítico).
+- **Habilidade [H]:** conjura a habilidade elemental da classe consumindo Mana (mostra o custo em MP no próprio botão).
+- **Mochila [M]:** abre o inventário para utilizar itens de cura (que também removem queimaduras) ou recuperação de Mana. Usar um item consome a ação do turno.
 - **Salvar / Carregar:** grava ou restaura o checkpoint da expedição.
 - **Novo Herói:** retorna à tela de criação de personagem (solicita confirmação caso exista uma partida ativa).
 
@@ -135,13 +135,21 @@ A barra de menu no topo da janela oferece acesso rápido às funções principai
 
 ---
 
-### 4.4. Salvamento e Carregamento (Checkpoint)
+### 4.4. Salvamento e Carregamento (Checkpoint Mid-Battle)
 
-Para preservar seu progresso antes de um andar difícil, clique em **Salvar** (ou pressione `Ctrl+S`):
+Para preservar seu progresso antes de um andar difícil ou no meio do combate, clique em **Salvar** (ou pressione `Ctrl+S`):
 
 ![Confirmação de checkpoint salvo](docs/prints/04_salvar_carregar.png)
 
-O jogo grava no arquivo `save_jogo.txt` (na pasta de execução) o número do andar atual, a classe, o elemento, os atributos do herói e os itens presentes na mochila. Ao usar **Carregar** (ou `Ctrl+O`), a aventura é retomada no início do andar salvo com a batalha daquele andar reiniciada.
+O jogo grava no arquivo `save_jogo.txt` (na pasta de execução) o número do andar atual, a classe, o elemento, os atributos do herói, os itens da mochila e o **HP exato do monstro** caso esteja no meio de uma batalha. Ao usar **Carregar** (ou `Ctrl+O`), a aventura é retomada no andar salvo restaurando tanto os atributos do herói quanto a vida restante do guardião.
+
+---
+
+### 4.5. Sistema de Conquistas e Platina da Torre
+
+Ao derrotar o Arconte da Tempestade no 4º andar e concluir a Torre, a vitória da classe utilizada é registrada no arquivo persistente `conquistas_torre.txt`.
+- **Moldura Dourada & Estrelas:** A classe vitoriosa ganha destaque visual imediato com moldura dourada cintilante (`#D4AF37`) e o título de condecoração `★ [Nome da Classe] ★`.
+- **Platina das 4 Classes:** O desafio de rejogabilidade convida o jogador a zerar a Torre com as 4 classes (*Espadachim*, *Arcanista*, *Atirador* e *Catalisador*) até platinar o jogo e exibir todos os 4 cards dourados.
 
 ---
 

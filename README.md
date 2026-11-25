@@ -38,7 +38,7 @@ O projeto está organizado em pacotes por responsabilidade (`modelo`, `combate`,
   - `Heroi` cria e mantém seu próprio `Inventario` (composição).
   - `Inventario` agrega objetos `Item` criados fora dele (agregação).
   - `Jogo` cria os guardiões dos andares e a `Batalha` atual (composição).
-- [x] **Persistência de Dados**: `GerenciadorPersistencia` salva e carrega checkpoints em arquivo de texto (`save_jogo.txt`), validando o formato de cada linha na leitura.
+- [x] **Persistência de Dados**: `GerenciadorPersistencia` salva e carrega checkpoints em disco (`save_jogo.txt`), preservando o estado do herói, inventário, andar e o HP exato do monstro mid-battle, além de gerenciar o histórico de classes vitoriosas em `conquistas_torre.txt`.
 - [x] **Tratamento de Exceções**: `ManaInsuficienteException`, `ItemNaoEncontradoException` e `PersistenciaException` (todas verificadas), tratadas na interface sem encerrar o jogo; uma ação recusada não faz o turno avançar.
 - [x] **Interface Gráfica (Swing + AWT)**: telas em `src/telas/` com `CardLayout`, paleta temática (`TemaFantasia`), cartões de classe, barras de vida e mana, retorno visual após cada ação e diálogos modais para inventário, eventos, fim de jogo, guia e sobre.
 - [x] **Testes Automatizados**: `testes/TesteIntegracao.java`, independente da interface, com 53 verificações em 8 grupos (atributos, polimorfismo, multiplicadores elementais, Catalisador, subida de nível, exceções, inventário e persistência).
@@ -77,9 +77,9 @@ As habilidades especiais (e o ataque básico do Catalisador) aplicam um multipli
 | **PYRO** | 0,65 | 0,8 | 1,5 | 1,4 |
 | **HYDRO** | 1,6 | 0,65 | 1,0 | 1,3 |
 | **ANEMO** | 1,35 | 1,35 | 0,65 | 1,35 |
-| **ELECTRO** | 1,3 | 1,6 | 1,0 | 0,65 |
+| **ELECTRO** | 1,3 | 1,8 | 1,0 | 0,65 |
 
-- **Vantagem Elemental**: as combinações mais fortes são HYDRO contra PYRO (*Vaporização*) e ELECTRO contra HYDRO (*Eletrocussão*), ambas × 1,6; ANEMO causa × 1,35 contra qualquer elemento diferente (*Dispersão*).
+- **Vantagem Elemental**: as combinações mais fortes são ELECTRO contra HYDRO (*Eletrocussão Devastadora*, × 1,8, no estilo *Genshin Impact*) e HYDRO contra PYRO (*Vaporização*, × 1,6); ANEMO causa × 1,35 contra qualquer elemento diferente (*Dispersão*).
 - **Resistência**: ataques contra o mesmo elemento causam × 0,65 (35% a menos de dano).
 - **Desvantagem**: PYRO contra HYDRO causa × 0,8 (*Chamas Apagadas*).
 - **Efeito Queimadura**: o guardião PYRO (*Slime Gigante Pyro*) tem 40% de chance por turno de usar o *Lança-Chamas*, que aplica queimadura de 6 de dano por turno durante 2 turnos. Itens de cura e a subida de nível removem a queimadura.
@@ -90,12 +90,20 @@ As habilidades especiais (e o ataque básico do Catalisador) aplicam um multipli
 
 | Andar | Guardião | Elemento | HP | Ataque | Defesa |
 | :---: | :--- | :---: | :---: | :---: | :---: |
-| 1 | Slime Gigante Pyro | PYRO | 85 | 19 | 6 |
-| 2 | Espectro das Marés | HYDRO | 120 | 26 | 8 |
-| 3 | Guardião dos Ventos | ANEMO | 155 | 33 | 10 |
-| 4 | Arconte da Tempestade | ELECTRO | 215 | 42 | 14 |
+| 1 | Slime Gigante Pyro | PYRO | 75 | 17 | 6 |
+| 2 | Espectro das Marés | HYDRO | 105 | 22 | 8 |
+| 3 | Guardião dos Ventos | ANEMO | 135 | 27 | 10 |
+| 4 | Arconte da Tempestade | ELECTRO | 185 | 33 | 14 |
 
-Após vencer o guardião dos andares 1 a 3, ocorre um evento aleatório: **Baú Mímico** (30%, combate extra contra o Mímico Voraz, que recompensa com o Elixir dos Arcontes), **Fonte Mística Sagrada** (25%, +50 HP e +35 Mana), **Altar dos Titãs** (20%, +5 Ataque e +2 Defesa) ou **Baú de Tesouro** (25%, um item de cura ou mana).
+Após vencer o guardião dos andares 1 a 3, ocorre um evento aleatório: **Baú Mímico** (18%, combate extra contra o Mímico Voraz, que recompensa com o Elixir dos Arcontes), **Fonte Mística Sagrada** (28%, +50 HP e +35 Mana), **Altar dos Titãs** (24%, +5 Ataque e +2 Defesa) ou **Baú de Tesouro** (30%, um item de cura ou mana).
+
+---
+
+## 🏆 Sistema de Conquistas e Platina
+
+Ao derrotar o Arconte da Tempestade no 4º andar, a vitória com aquela classe é registrada no arquivo persistente `conquistas_torre.txt`.
+- **Cards Dourados**: Na tela de criação/seleção de heróis, os cards das classes que já venceram a Torre ganham moldura dourada cintilante (`#D4AF37`) e o distintivo `★ [Classe] ★`.
+- **Platinar o Jogo**: O objetivo de rejogabilidade é vencer a Torre com as 4 classes (*Espadachim*, *Arcanista*, *Atirador* e *Catalisador*) até platinar o jogo com os 4 heróis dourados.
 
 ---
 
@@ -117,7 +125,6 @@ rpg-poo-java/
 │   ├── manual/                   # Versão anterior do manual (2.0)
 │   ├── relatorio/                # Relatório acadêmico ABNT
 │   └── screenshots/              # Reservado
-├── assets/imagens/               # Reservado
 ├── MANUAL_DO_USUARIO.md          # Manual do usuário (versão atual)
 ├── README.md                     # Apresentação do projeto e instruções
 └── .gitignore                    # Ignora bin/, saves e arquivos de IDE
