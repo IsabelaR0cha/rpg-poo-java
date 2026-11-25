@@ -88,29 +88,29 @@ Após iniciar a partida, o jogo alterna para a tela **Torre dos Elementos (Batal
 
 ![Tela de batalha por turnos](docs/prints/02_batalha_turnos.png)
 
-Na parte superior ficam as fichas claramente delimitadas do **Aliado: Viajante (Herói)** (com moldura verde) e do **Inimigo: Guardião do Andar** (com moldura carmesim), com barras de HP e Mana, atributos atualizados e alertas de estado (como *Em Chamas!* quando atingido por queimadura). No centro fica o **Diário de Combate da Torre**, com prefixos organizados por combatente (`▶ AÇÃO DO HERÓI: ...`, `✨ HABILIDADE DO HERÓI: ...`, `🧪 MOCHILA DO HERÓI: ...` e `◀ REAÇÃO DO INIMIGO: ...`), rolagem automática e o botão **Limpar Log** no canto superior direito para limpar o histórico de texto quando desejar.
+Na parte superior ficam as fichas claramente delimitadas do **Aliado: Viajante (Herói)** (com moldura verde) e do **Inimigo: Guardião do Andar** (com moldura carmesim), com barras de HP e Mana, atributos atualizados, feedback visual animado para críticos, esquivas e reações elementais, e alertas de estado (como *Em Chamas!* quando atingido por queimadura). No centro fica o **Diário de Combate da Torre**, com prefixos organizados por combatente (`▶ AÇÃO DO HERÓI: ...`, `✨ HABILIDADE DO HERÓI: ...`, `🧪 MOCHILA DO HERÓI: ...` e `◀ REAÇÃO DO INIMIGO: ...`), rolagem automática e o botão **Limpar Log** no canto superior direito para limpar o histórico de texto quando desejar.
 
 #### Ações de Combate
 
 - **Atacar [A]:** realiza um ataque físico básico (com chance de acerto crítico).
 - **Habilidade [H]:** conjura a habilidade elemental da classe consumindo Mana (mostra o custo em MP no próprio botão).
 - **Mochila [M]:** abre o inventário para utilizar itens de cura (que também removem queimaduras) ou recuperação de Mana. Usar um item consome a ação do turno.
-- **Salvar / Carregar:** grava ou restaura o checkpoint da expedição.
+- **Salvar / Carregar:** grava ou restaura o checkpoint da expedição (preservando também o HP atual do monstro no meio da batalha).
 - **Novo Herói:** retorna à tela de criação de personagem (solicita confirmação caso exista uma partida ativa).
 
 #### Os 4 Guardiões e Eventos entre Andares
 
-1. **Andar 1 — Slime Gigante Pyro (`PYRO`):** pode lançar *Lança-Chamas* e aplicar queimadura contínua por 2 turnos.
-2. **Andar 2 — Espectro das Marés (`HYDRO`):** quando está com HP reduzido, pode conjurar *Manto das Marés* para atacar e regenerar vida.
-3. **Andar 3 — Guardião dos Ventos (`ANEMO`):** possui alta esquiva (18%) e pode usar o golpe *Ciclone Cortante*.
-4. **Andar 4 — Arconte da Tempestade (`ELECTRO`):** chefe final; desfere o *Raio Cataclísmico*, causando dano elevado e drenando 10 de Mana.
+1. **Andar 1 — Slime Gigante Pyro (`PYRO` | HP 75 | ATQ 17 | DEF 5):** pode lançar *Lança-Chamas* (40% de chance) e aplicar queimadura contínua de 6 de dano por 2 turnos.
+2. **Andar 2 — Espectro das Marés (`HYDRO` | HP 105 | ATQ 22 | DEF 6):** quando está abaixo de 40% de HP, pode conjurar *Manto das Marés* para atacar e regenerar 16 de vida.
+3. **Andar 3 — Guardião dos Ventos (`ANEMO` | HP 135 | ATQ 27 | DEF 8):** possui alta esquiva (18%) e pode usar o golpe *Ciclone Cortante*.
+4. **Andar 4 — Arconte da Tempestade (`ELECTRO` | HP 185 | ATQ 33 | DEF 11):** chefe final; desfere o *Raio Cataclísmico*, causando dano elevado e drenando 8 de Mana.
 
-Ao derrotar o guardião de um andar (exceto o chefe final), o herói sobe de nível (`+15 HP Máximo`, `+8 Mana Máxima`, `+4 Ataque`, `+2 Defesa` e recuperação parcial) e ocorre um evento aleatório:
+Ao derrotar o guardião de um andar (exceto o chefe final), o herói sobe de nível (`+15 HP Máximo`, `+8 Mana Máxima`, `+4 Ataque`, `+2 Defesa`, além de recuperar `+55 HP` e `+35 Mana` e remover queimaduras) e ocorre um evento aleatório:
 
-- **Baú de Tesouro:** adiciona poções de cura ou éteres de mana ao inventário.
-- **Fonte Mística Sagrada:** restaura `+50 HP` e `+35 Mana`.
-- **Altar dos Titãs:** concede `+5 Ataque` e `+2 Defesa` permanentes.
-- **Baú Mímico (Emboscada):** um *Mímico Voraz* surge no lugar do baú; vencê-lo recompensa com o **Elixir dos Arcontes** (`+75 HP`).
+- **Baú de Tesouro (30%):** adiciona poções de cura ou éteres de mana ao inventário.
+- **Fonte Mística Sagrada (27%):** restaura `+50 HP` e `+35 Mana`.
+- **Altar dos Titãs (25%):** concede `+5 Ataque` e `+2 Defesa` permanentes.
+- **Baú Mímico — Emboscada (18%):** um *Mímico Voraz* surge no lugar do baú; vencê-lo recompensa com o **Elixir dos Arcontes** (`+75 HP`).
 
 Quando o jogo termina por vitória no 4º andar ou por derrota, os botões de combate são travados e um diálogo final permite revisar o diário, recarregar o último checkpoint ou iniciar um novo herói.
 

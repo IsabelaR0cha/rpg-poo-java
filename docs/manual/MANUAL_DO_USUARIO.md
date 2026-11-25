@@ -53,7 +53,7 @@ As habilidades (e os ataques básicos do Catalisador) aplicam multiplicadores co
   - **x1.0** quando não há interação elemental especial.
 
 ### Efeito de Status: Queimadura (Combustão)
-Ataques e contra-ataques de inimigos do elemento **PYRO** possuem 35% de chance de aplicar **Queimadura** por 2 turnos. No final de cada turno concluído, o herói sofre 6 de dano passivo até que o efeito expire. Ações inválidas (como tentar usar habilidade sem mana ou item indisponível) não avançam o turno nem aplicam o dano da queimadura.
+Ataques e contra-ataques do guardião **PYRO** (*Slime Gigante Pyro*) possuem 40% de chance de aplicar **Queimadura** por 2 turnos. No final de cada turno concluído, o herói sofre 6 de dano passivo até que o efeito expire. Ações inválidas (como tentar usar habilidade sem mana ou item indisponível) não avançam o turno nem aplicam o dano da queimadura.
 
 ---
 
@@ -65,11 +65,11 @@ Ao derrotar o monstro de um andar:
    - **+8 Mana Máxima**
    - **+4 Ataque**
    - **+2 Defesa**
-   - Recuperação imediata de vida (+30 HP) e mana (+15 MP).
+   - Recuperação imediata de vida (**+55 HP**) e mana (**+35 MP**), além da remoção de queimadura ativa.
 2. **Eventos Especiais:**
-   - **Baú do Guardião (30%):** Concede poções alquímicas raras (Poção Grande de Cura ou Elixir Concentrado de Mana).
-   - **Mímico Voraz (18%):** O baú é um monstro disfarçado com estatísticas aumentadas, iniciando um combate surpresa! Derrotá-lo rende o poderoso Elixir dos Arcontes.
-   - **Fonte Sagrada (28%) ou Altar dos Titãs (24%):** Restaura vida/mana ou aumenta atributos permanentes antes da ascensão ao próximo andar.
+   - **Baú do Guardião (30%):** Concede poções alquímicas raras (Poção de Cura Maior, Éter Concentrado ou Elixir Elemental Sagrado).
+   - **Mímico Voraz (18%):** O baú é um monstro disfarçado, iniciando um combate surpresa! Derrotá-lo rende o poderoso Elixir dos Arcontes.
+   - **Fonte Mística Sagrada (27%) ou Altar dos Titãs (25%):** Restaura vida/mana (`+50 HP` e `+35 MP`) ou aumenta atributos permanentes (`+5 Ataque` e `+2 Defesa`) antes da ascensão ao próximo andar.
 
 ---
 

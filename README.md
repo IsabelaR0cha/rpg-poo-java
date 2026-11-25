@@ -62,7 +62,7 @@ A cada guardião derrotado (inclusive o chefe final), o herói sobe de nível e 
 - **+8 Mana Máxima**
 - **+4 Ataque**
 - **+2 Defesa**
-- Recupera **+35 HP** e **+25 Mana** (sem ultrapassar os máximos) e tem a queimadura removida.
+- Recupera **+55 HP** e **+35 Mana** (sem ultrapassar os máximos) e tem a queimadura removida.
 
 Vencer o Mímico Voraz não concede nível, mas leva o herói ao andar seguinte.
 
@@ -90,12 +90,12 @@ As habilidades especiais (e o ataque básico do Catalisador) aplicam um multipli
 
 | Andar | Guardião | Elemento | HP | Ataque | Defesa |
 | :---: | :--- | :---: | :---: | :---: | :---: |
-| 1 | Slime Gigante Pyro | PYRO | 75 | 17 | 6 |
-| 2 | Espectro das Marés | HYDRO | 105 | 22 | 8 |
-| 3 | Guardião dos Ventos | ANEMO | 135 | 27 | 10 |
-| 4 | Arconte da Tempestade | ELECTRO | 185 | 33 | 14 |
+| 1 | Slime Gigante Pyro | PYRO | 75 | 17 | 5 |
+| 2 | Espectro das Marés | HYDRO | 105 | 22 | 6 |
+| 3 | Guardião dos Ventos | ANEMO | 135 | 27 | 8 |
+| 4 | Arconte da Tempestade | ELECTRO | 185 | 33 | 11 |
 
-Após vencer o guardião dos andares 1 a 3, ocorre um evento aleatório: **Baú Mímico** (18%, combate extra contra o Mímico Voraz, que recompensa com o Elixir dos Arcontes), **Fonte Mística Sagrada** (28%, +50 HP e +35 Mana), **Altar dos Titãs** (24%, +5 Ataque e +2 Defesa) ou **Baú de Tesouro** (30%, um item de cura ou mana).
+Após vencer o guardião dos andares 1 a 3, ocorre um evento aleatório: **Baú Mímico** (18%, combate extra contra o Mímico Voraz, que recompensa com o Elixir dos Arcontes), **Fonte Mística Sagrada** (27%, +50 HP e +35 Mana), **Altar dos Titãs** (25%, +5 Ataque e +2 Defesa) ou **Baú de Tesouro** (30%, um item de cura ou mana).
 
 ---
 
